@@ -23,7 +23,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        pip install pytest pytest-cov
+        pip install pytest pytest-cov coverage
 
     - name: Verify project structure
       run: |
@@ -42,21 +42,20 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        python -m pytest account/tests/ --cov=account --cov-report=xml:coverage-account.xml --junitxml=test-results-account.xml -v
-        python -m pytest shared/tests/ --cov=shared --cov-report=xml:coverage-shared.xml --junitxml=test-results-shared.xml -v
-
-    - name: Merge coverage reports
-      run: |
-        pip install coverage
-        python -m coverage combine coverage-account.xml coverage-shared.xml
-        python -m coverage xml -o coverage.xml
+        # Executar testes com dados de cobertura combinados
+        python -m pytest account/tests/ shared/tests/ \
+          --cov=account \
+          --cov=shared \
+          --cov-report=xml:coverage.xml \
+          --junitxml=test-results.xml \
+          -v
 
     - name: Verify files
       run: |
         echo "Coverage file:"
         ls -la coverage.xml
         echo "Test results files:"
-        ls -la test-results-*.xml
+        ls -la test-results.xml
         echo "Coverage file content:"
         head -20 coverage.xml || echo "No coverage file"
 
@@ -77,5 +76,5 @@ jobs:
           -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**
           -Dsonar.tests=account/tests,shared/tests
           -Dsonar.python.coverage.reportPaths=coverage.xml
-          -Dsonar.python.xunit.reportPath=test-results-account.xml,test-results-shared.xml
+          -Dsonar.python.xunit.reportPath=test-results.xml
           -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**
