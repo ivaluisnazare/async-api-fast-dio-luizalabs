@@ -30,18 +30,17 @@ jobs:
         echo "Project structure:"
         find . -name "*.py" | head -20
         echo "Tests directory:"
-        ls -la tests/ || echo "No tests directory"
+        ls -la account/tests/ || echo "No tests directory"
         echo "PYTHONPATH:"
         python -c "import sys; print(sys.path)"
 
     - name: List tests
       run: |
-        python -m pytest tests/ --collect-only
+        python -m pytest account/tests/ --collect-only
 
     - name: Run tests with coverage
       run: |
-        python -m pytest --cov=./ --cov-report=xml:coverage.xml --junitxml=test-results.xml -v || 
-        python -m pytest tests/test.py --cov=./ --cov-report=xml:coverage.xml --junitxml=test-results.xml -v
+        python -m pytest account/tests/ --cov=account --cov-report=xml:coverage.xml --junitxml=test-results.xml -v
 
     - name: Verify files
       run: |
@@ -67,7 +66,7 @@ jobs:
           -Dsonar.sources=.
           -Dsonar.sourceEncoding=UTF-8
           -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**
-          -Dsonar.tests=tests
+          -Dsonar.tests=account/tests
           -Dsonar.python.coverage.reportPaths=coverage.xml
           -Dsonar.python.xunit.reportPath=test-results.xml
           -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**
