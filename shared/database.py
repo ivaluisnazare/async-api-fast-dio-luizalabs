@@ -11,13 +11,13 @@ class Settings(BaseSettings):
         case_sensitive=False
     )
 
-    DB_USER: str = Field(default="database", description="Usuário do banco de dados")
-    DB_PASSWORD: str = Field(default="database", description="Senha do banco de dados")
-    DB_NAME: str = Field(default="db", description="Nome do banco de dados")
-    DB_HOST: str = Field(default="localhost", description="Host do banco de dados")
-    DB_PORT: str = Field(default="5432", description="Porta do banco de dados")
+    DB_USER: str = Field(default="database", description="User")
+    DB_PASSWORD: str = Field(default="database", description="password")
+    DB_NAME: str = Field(default="db", description="database name")
+    DB_HOST: str = Field(default="localhost", description="Host address")
+    DB_PORT: str = Field(default="5432", description="Port")
 
-    DATABASE_URL: str = Field(default="", description="URL de conexão com o banco de dados")
+    DATABASE_URL: str = Field(default="", description="URL connecting to the database")
 
     ENVIRONMENT: Literal["development", "staging", "production"] = "production"
 
