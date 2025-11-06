@@ -30,17 +30,20 @@ jobs:
         echo "Project structure:"
         find . -name "*.py" | head -20
         echo "Tests directory:"
-        ls -la account/tests/ || echo "No tests directory"
+        ls -la account/tests/ || echo "No tests account directory"
+        ls -la shared/tests/ || echo "No tests shared directory"
         echo "PYTHONPATH:"
         python -c "import sys; print(sys.path)"
 
     - name: List tests
       run: |
         python -m pytest account/tests/ --collect-only
+        python -m pytest sharad/tests/ --collect-only
 
     - name: Run tests with coverage
       run: |
         python -m pytest account/tests/ --cov=account --cov-report=xml:coverage.xml --junitxml=test-results.xml -v
+        python -m pytest shared/tests/ --cov=shared --cov-report=xml:coverage.xml --junitxml=test-results.xml -v
 
     - name: Verify files
       run: |
