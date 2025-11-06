@@ -29,35 +29,27 @@ jobs:
       run: |
         echo "Project structure:"
         find . -name "*.py" | head -20
-        echo "Tests directory:"
-        ls -la account/tests/ || echo "No tests account directory"
-        ls -la shared/tests/ || echo "No tests shared directory"
-        echo "PYTHONPATH:"
-        python -c "import sys; print(sys.path)"
-
-    - name: List tests
-      run: |
-        python -m pytest account/tests/ --collect-only
-        python -m pytest shared/tests/ --collect-only
+        echo "Tests directories:"
+        ls -la account/tests/ || echo "No account tests directory"
+        ls -la shared/tests/ || echo "No shared tests directory"
+        echo "Current directory:"
+        pwd
 
     - name: Run tests with coverage
       run: |
-        # Executar testes com dados de cobertura combinados
-        python -m pytest account/tests/ shared/tests/ \
+        python -m pytest \
           --cov=account \
           --cov=shared \
           --cov-report=xml:coverage.xml \
           --junitxml=test-results.xml \
           -v
 
-    - name: Verify files
+    - name: Verify coverage data
       run: |
-        echo "Coverage file:"
-        ls -la coverage.xml
-        echo "Test results files:"
-        ls -la test-results.xml
-        echo "Coverage file content:"
-        head -20 coverage.xml || echo "No coverage file"
+        echo "Coverage file content (first 50 lines):"
+        head -50 coverage.xml || echo "No coverage file"
+        echo "Coverage summary:"
+        python -m coverage report || echo "No coverage report"
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@e2a1ee7c31ee491f1e09c74535b1c0d3e9f5cd82
@@ -71,10 +63,10 @@ jobs:
           -Dsonar.projectName=async-api-fast-dio-luizalabs
           -Dsonar.organization=ivaluisnazare
           -Dsonar.projectVersion=1.0
-          -Dsonar.sources=.
+          -Dsonar.sources=account,shared
           -Dsonar.sourceEncoding=UTF-8
-          -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**
+          -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**
           -Dsonar.tests=account/tests,shared/tests
           -Dsonar.python.coverage.reportPaths=coverage.xml
           -Dsonar.python.xunit.reportPath=test-results.xml
-          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**
+          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**
