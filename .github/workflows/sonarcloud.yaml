@@ -37,12 +37,20 @@ jobs:
 
     - name: Run tests with coverage
       run: |
+        touch account/tests/__init__.py || true
+        touch shared/tests/__init__.py || true
         python -m pytest \
           --cov=account \
           --cov=shared \
           --cov-report=xml:coverage.xml \
           --junitxml=test-results.xml \
           -v
+    - name: Debug test discovery
+      run: |
+        echo "=== Listing found tests ==="
+        python -m pytest --collect-only -q
+        echo "=== Final project structure ==="
+        find . -name "*.py" -type f | grep -E "(test_|__init__)" | sort
 
     - name: Verify coverage data
       run: |
