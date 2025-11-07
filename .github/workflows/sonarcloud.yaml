@@ -29,18 +29,16 @@ jobs:
       run: |
         echo "Project structure:"
         find . -name "*.py" | head -20
+        echo "Current directory:"
+        pwd
 
     - name: Run tests with coverage
       run: |
-        # Garantir que os __init__.py existem
-        touch account/__init__.py || true
-        touch shared/__init__.py || true
-        touch account/tests/__init__.py || true
-        touch shared/tests/__init__.py || true
+        find . -name "*.py" -path "*/tests/*" -exec dirname {} \; | sort -u | xargs -I {} touch {}/__init__.py || true
         
-        # Executar testes com cobertura consistente
         python -m pytest \
           --cov=./ \
+          --cov-config=pyproject.toml \
           --cov-report=xml:coverage.xml \
           --cov-report=term-missing \
           --junitxml=test-results.xml \
@@ -48,12 +46,12 @@ jobs:
 
     - name: Verify coverage data
       run: |
-        echo "=== Coverage report ==="
-        python -m coverage report
-        echo "=== Coverage XML exists ==="
-        ls -la coverage.xml
-        echo "=== First lines of coverage.xml ==="
-        head -10 coverage.xml
+        echo "=== Coverage file exists? ==="
+        ls -la coverage.xml || echo "No coverage file"
+        echo "=== Coverage summary ==="
+        python -m coverage report -m
+        echo "=== Coverage XML first lines ==="
+        head -20 coverage.xml || echo "Cannot read coverage file"
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@e2a1ee7c31ee491f1e09c74535b1c0d3e9f5cd82
@@ -69,8 +67,8 @@ jobs:
           -Dsonar.projectVersion=1.0
           -Dsonar.sources=account,shared
           -Dsonar.sourceEncoding=UTF-8
-          -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**
+          -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**
           -Dsonar.tests=account/tests,shared/tests
-          -Dsonar.python.coverage.reportPath=coverage.xml
+          -Dsonar.python.coverage.reportPaths=coverage.xml
           -Dsonar.python.xunit.reportPath=test-results.xml
-          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**
+          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**
