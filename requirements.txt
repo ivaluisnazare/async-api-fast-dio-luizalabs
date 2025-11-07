@@ -1,3 +1,5 @@
+pytest-asyncio
+pydantic
 pydantic-settings
 fastapi==0.104.1
 uvicorn==0.24.0
