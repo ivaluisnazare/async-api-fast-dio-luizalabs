@@ -3,16 +3,17 @@ testpaths = ["account/tests", "shared/tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "--verbose --strict-markers --strict-config"
+addopts = "--verbose --strict-markers --strict-config --cov=./ --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
-source = ["account", "shared"]
+source = ["."]
 omit = [
     "*/tests/*",
     "*/venv/*",
     "*/.venv/*",
     "*/__pycache__/*",
-    "*/.github/*"
+    "*/.github/*",
+    "*/htmlcov/*"
 ]
 
 [tool.coverage.report]
