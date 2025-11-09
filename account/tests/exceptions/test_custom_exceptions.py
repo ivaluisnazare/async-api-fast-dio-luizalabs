@@ -1,7 +1,7 @@
 import pytest
 from fastapi import HTTPException, status
 
-from account.src.exceptions import AccountNotFoundException, InsufficientBalanceException, \
+from account.src.exceptions.custom_exceptions import AccountNotFoundException, InsufficientBalanceException, \
     DuplicateAccountException, InvalidAmountException, AccountException
 
 
