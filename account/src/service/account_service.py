@@ -21,7 +21,7 @@ class AccountService:
         query = select(accounts).offset(skip).limit(limit)
         result = await self.db.execute(query)
         account_records = result.fetchall()
-        return [AccountResponse(**account._asdict()) for account in account_records]
+        return [AccountResponse.model_validate(account._asdict()) for account in account_records]
 
     async def get_account_by_id(self, account_id: int) -> AccountResponse:
         query = select(accounts).where(accounts.c.id == account_id)
@@ -31,7 +31,7 @@ class AccountService:
         if not account_record:
             raise AccountNotFoundException(account_id=account_id)
 
-        return AccountResponse(**account_record._asdict())
+        return AccountResponse.model_validate(account_record._asdict())
 
     async def get_account_by_user_id(self, user_id: int) -> AccountResponse:
         query = select(accounts).where(accounts.c.user_id == user_id)
@@ -41,7 +41,7 @@ class AccountService:
         if not account_record:
             raise AccountNotFoundException(user_id=user_id)
 
-        return AccountResponse(**account_record._asdict())
+        return AccountResponse.model_validate(account_record._asdict())
 
     async def create_account(self, account_data: AccountCreate) -> AccountResponse:
         existing_query = select(accounts).where(accounts.c.user_id == account_data.user_id)
@@ -58,7 +58,7 @@ class AccountService:
         await self.db.commit()
 
         account_record = result.fetchone()
-        return AccountResponse(**account_record._asdict())
+        return AccountResponse.model_validate(account_record._asdict())
 
     async def update_account(self, account_id: int, account_data: AccountUpdate) -> AccountResponse:
         await self.get_account_by_id(account_id)
