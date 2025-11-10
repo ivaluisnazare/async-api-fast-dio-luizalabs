@@ -4,7 +4,7 @@ from httpx import ASGITransport, AsyncClient
 import asyncio
 from unittest.mock import AsyncMock
 
-from account.src.main import app
+from main import app
 
 
 @pytest_asyncio.fixture(scope="session")

@@ -6,20 +6,20 @@ from shared.database import engine, metadata
 from account.src.controller.account_controller import router as account_router
 from config.settings import settings
 
-
-@asynccontextmanager
-async def lifespan():
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.create_all)
-    yield
-    await engine.dispose()
+#
+# @asynccontextmanager
+# async def lifespan():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(metadata.create_all)
+#     yield
+#     await engine.dispose()
 
 
 app = FastAPI(
     title="Account Management API",
     description="RESTful API for managing bank accounts",
     version="1.0.0",
-    lifespan=lifespan
+    # lifespan=lifespan
 )
 
 app.include_router(account_router)
