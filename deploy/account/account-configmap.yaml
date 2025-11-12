@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastapi-config
+  labels:
+    app: fastapi
+data:
+  DATABASE_URL: "postgresql+asyncpg://banking_operations:account@123@postgres-service:5432/bank_db"  # ← MUDOU AQUI
+  IS_DEVELOPMENT: "false"
+  IS_PRODUCTION: "true"
+  LOG_LEVEL: "info"

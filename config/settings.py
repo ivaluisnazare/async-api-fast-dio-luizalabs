@@ -11,9 +11,9 @@ class Settings(BaseSettings):
         case_sensitive=False
     )
 
-    DB_USER: str = Field(default="database", description="User")
-    DB_PASSWORD: str = Field(default="database", description="password")
-    DB_NAME: str = Field(default="db", description="database name")
+    DB_USER: str = Field(default="banking_operations", description="User")
+    DB_PASSWORD: str = Field(default="account@123", description="password")
+    DB_NAME: str = Field(default="bank_db", description="database name")
     DB_HOST: str = Field(default="localhost", description="Host address")
     DB_PORT: str = Field(default="5432", description="Port")
 
@@ -29,9 +29,9 @@ class Settings(BaseSettings):
 
         data = info.data
 
-        user = data.get("DB_USER", "database")
-        password = data.get("DB_PASSWORD", "database")
-        name = data.get("DB_NAME", "db")
+        user = data.get("DB_USER", "banking_operations")
+        password = data.get("DB_PASSWORD", "account@123")
+        name = data.get("DB_NAME", "bank_db")
         host = data.get("DB_HOST", "localhost")
         port = data.get("DB_PORT", "5432")
 
@@ -40,8 +40,8 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL")
     @classmethod
     def validate_database_url(cls, v):
-        if not v.startswith("postgresql://"):
-            raise ValueError("DATABASE_URL must use the protocol postgresql://")
+        if not v.startswith(("postgresql://", "postgresql+asyncpg://")):
+            raise ValueError("DATABASE_URL must use the protocol postgresql:// or postgresql+asyncpg://")
         return v
 
     @property
