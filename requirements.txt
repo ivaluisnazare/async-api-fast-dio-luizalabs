@@ -1,3 +1,5 @@
+uliweb-alembic
+backoff
 httpx>=0.25.0
 pytest-asyncio
 pydantic

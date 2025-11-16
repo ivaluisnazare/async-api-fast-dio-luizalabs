@@ -1,8 +1,14 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>chown</w>
+      <w>containerenv</w>
       <w>customdb</w>
       <w>customuser</w>
+      <w>dockerenv</w>
+      <w>isready</w>
+      <w>ivanazare</w>
+      <w>pgdata</w>
       <w>sessionmaker</w>
       <w>tful</w>
     </words>

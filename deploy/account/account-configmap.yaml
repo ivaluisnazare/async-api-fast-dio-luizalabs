@@ -5,7 +5,7 @@ metadata:
   labels:
     app: fastapi
 data:
-  DATABASE_URL: "postgresql+asyncpg://banking_operations:account@123@postgres-service:5432/bank_db"  # ← MUDOU AQUI
+  DATABASE_URL: "postgresql+asyncpg://banking_operations:account@123@postgres-service:5432/bank_db"
   IS_DEVELOPMENT: "false"
   IS_PRODUCTION: "true"
   LOG_LEVEL: "info"

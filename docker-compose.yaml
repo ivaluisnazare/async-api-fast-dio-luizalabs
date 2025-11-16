@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: banking_postgres
+    environment:
+      POSTGRES_USER: banking_operations
+      POSTGRES_PASSWORD: account123
+      POSTGRES_DB: bank_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banking_operations -d bank_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
