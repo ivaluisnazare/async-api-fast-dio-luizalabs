@@ -1,16 +1,18 @@
+# custom_exceptions.py
 from fastapi import HTTPException, status
 
 
 class AccountException(HTTPException):
+    """Base exception for account-related errors"""
     pass
 
 
 class AccountNotFoundException(AccountException):
     def __init__(self, account_id: int = None, user_id: int = None):
         detail = "Account not found"
-        if account_id:
+        if account_id is not None:
             detail = f"Account with id {account_id} not found"
-        elif user_id:
+        elif user_id is not None:
             detail = f"Account for user {user_id} not found"
 
         super().__init__(
