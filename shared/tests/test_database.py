@@ -76,12 +76,12 @@ class TestDatabaseSettings:
     def test_database_url_from_settings(self):
         settings = Settings()
 
-        assert settings.DATABASE_URL.startswith("postgresql://")
+        assert settings.DATABASE_URL.startswith("postgresql+asyncpg://")
 
     @patch("shared.database.settings")
     def test_development_environment_echo_true(self, mock_settings):
         mock_settings.is_development = True
-        mock_settings.DATABASE_URL = "postgresql://test:test@localhost:5432/test"
+        mock_settings.DATABASE_URL = "postgresql+asyncpg://test:test@localhost:5432/test"
 
         test_engine = create_async_engine(
             mock_settings.DATABASE_URL.replace(
