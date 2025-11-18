@@ -65,7 +65,7 @@ class TestInsufficientBalanceException:
             required_balance=required_balance
         )
 
-        assert exception.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert exception.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
         expected_detail = (
             f"Insufficient balance in account {account_id}. "
             f"Current: {current_balance}, Required: {required_balance}"
@@ -112,7 +112,7 @@ class TestInvalidAmountException:
         amount = 100.0
         exception = InvalidAmountException(amount=amount)
 
-        assert exception.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert exception.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
         assert exception.detail == f"Invalid amount: {amount}. Amount must be positive"
 
     def test_invalid_amount_exception_negative(self):
@@ -145,7 +145,7 @@ class TestExceptionRaising:
                 required_balance=100.0
             )
 
-        assert exc_info.value.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert exc_info.value.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
         assert "Insufficient balance" in str(exc_info.value.detail)
 
     def test_exception_chaining(self):
