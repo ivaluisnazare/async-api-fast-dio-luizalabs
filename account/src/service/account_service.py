@@ -1,159 +1,133 @@
+# account_service.py
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
 from decimal import Decimal
 from typing import List
 
-from account.src.models.account import accounts
+from account.src.repository.account_repository import AccountRepository
 from account.src.schemas.account import AccountCreate, AccountUpdate, AccountResponse
 from account.src.exceptions.custom_exceptions import (
-    AccountNotFoundException,
     InsufficientBalanceException,
-    DuplicateAccountException,
-    InvalidAmountException
+    InvalidAmountException, AccountNotFoundException
 )
 
 
 class AccountService:
     def __init__(self, db: AsyncSession):
+        self.repository = AccountRepository(db)
         self.db = db
 
     async def get_all_accounts(self, skip: int = 0, limit: int = 100) -> List[AccountResponse]:
-        query = select(accounts).offset(skip).limit(limit)
-        result = await self.db.execute(query)
-        account_records = result.fetchall()
-        return [AccountResponse.model_validate(account._asdict()) for account in account_records]
+        account_records = await self.repository.get_all(skip, limit)
+        return [AccountResponse.model_validate(account) for account in account_records]
 
     async def get_account_by_id(self, account_id: int) -> AccountResponse:
-        query = select(accounts).where(accounts.c.id == account_id)
-        result = await self.db.execute(query)
-        account_record = result.fetchone()
-
-        if not account_record:
-            raise AccountNotFoundException(account_id=account_id)
-
-        return AccountResponse.model_validate(account_record._asdict())
+        account_record = await self.repository.get_by_id(account_id)
+        return AccountResponse.model_validate(account_record)
 
     async def get_account_by_user_id(self, user_id: int) -> AccountResponse:
-        query = select(accounts).where(accounts.c.user_id == user_id)
-        result = await self.db.execute(query)
-        account_record = result.fetchone()
-
-        if not account_record:
-            raise AccountNotFoundException(user_id=user_id)
-
-        return AccountResponse.model_validate(account_record._asdict())
+        account_record = await self.repository.get_by_user_id(user_id)
+        return AccountResponse.model_validate(account_record)
 
     async def create_account(self, account_data: AccountCreate) -> AccountResponse:
-        existing_query = select(accounts).where(accounts.c.user_id == account_data.user_id)
-        result = await self.db.execute(existing_query)
-        if result.fetchone():
-            raise DuplicateAccountException(account_data.user_id)
-
-        query = accounts.insert().values(
-            user_id=account_data.user_id,
-            balance=account_data.balance
-        ).returning(accounts)
-
-        result = await self.db.execute(query)
-        await self.db.commit()
-
-        account_record = result.fetchone()
-        return AccountResponse.model_validate(account_record._asdict())
+        try:
+            account_record = await self.repository.create(account_data)
+            await self.db.commit()
+            return AccountResponse.model_validate(account_record)
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def update_account(self, account_id: int, account_data: AccountUpdate) -> AccountResponse:
-        await self.get_account_by_id(account_id)
-
-        update_data = {}
-        if account_data.balance is not None:
-            update_data["balance"] = account_data.balance
-
-        if update_data:
-            query = (
-                update(accounts)
-                .where(accounts.c.id == account_id)
-                .values(**update_data)
-                .returning(accounts)
-            )
-
-            result = await self.db.execute(query)
+        try:
+            account_record = await self.repository.update(account_id, account_data)
             await self.db.commit()
-
-            account_record = result.fetchone()
-            return AccountResponse(**account_record._asdict())
-
-        return await self.get_account_by_id(account_id)
+            return AccountResponse.model_validate(account_record)
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def delete_account(self, account_id: int) -> bool:
-        await self.get_account_by_id(account_id)
-
-        query = accounts.delete().where(accounts.c.id == account_id)
-        await self.db.execute(query)
-        await self.db.commit()
-
-        return True
+        try:
+            result = await self.repository.delete(account_id)
+            await self.db.commit()
+            return result
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def deposit(self, account_id: int, amount: Decimal) -> AccountResponse:
         if amount <= 0:
             raise InvalidAmountException(amount)
 
-        query = (
-            update(accounts)
-            .where(accounts.c.id == account_id)
-            .values(balance=accounts.c.balance + amount)
-            .returning(accounts)
-        )
+        try:
+            current_balance = await self.repository.get_balance(account_id)
+            new_balance = current_balance + amount
 
-        result = await self.db.execute(query)
-        account_record = result.fetchone()
-
-        if not account_record:
-            raise AccountNotFoundException(account_id=account_id)
-
-        await self.db.commit()
-        return AccountResponse(**account_record._asdict())
+            account_record = await self.repository.update_balance(account_id, new_balance)
+            await self.db.commit()
+            return AccountResponse.model_validate(account_record)
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def withdraw(self, account_id: int, amount: Decimal) -> AccountResponse:
         if amount <= 0:
             raise InvalidAmountException(amount)
 
-        current_account = await self.get_account_by_id(account_id)
-        if current_account.balance < amount:
-            raise InsufficientBalanceException(
-                account_id=account_id,
-                current_balance=current_account.balance,
-                required_balance=amount
-            )
+        try:
+            current_balance = await self.repository.get_balance(account_id)
 
-        query = (
-            update(accounts)
-            .where(accounts.c.id == account_id)
-            .values(balance=accounts.c.balance - amount)
-            .returning(accounts)
-        )
+            if current_balance < amount:
+                raise InsufficientBalanceException(
+                    account_id=account_id,
+                    current_balance=current_balance,
+                    required_balance=amount
+                )
 
-        result = await self.db.execute(query)
-        account_record = result.fetchone()
-
-        await self.db.commit()
-        return AccountResponse(**account_record._asdict())
+            new_balance = current_balance - amount
+            account_record = await self.repository.update_balance(account_id, new_balance)
+            await self.db.commit()
+            return AccountResponse.model_validate(account_record)
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def transfer(self, from_account_id: int, to_account_id: int, amount: Decimal) -> dict:
         if amount <= 0:
             raise InvalidAmountException(amount)
 
-        await self.get_account_by_id(from_account_id)
-        await self.get_account_by_id(to_account_id)
-
         try:
-            from_account = await self.withdraw(from_account_id, amount)
-            to_account = await self.deposit(to_account_id, amount)
+            await self.repository.get_by_id(from_account_id)
+            await self.repository.get_by_id(to_account_id)
+
+            from_balance = await self.repository.get_balance(from_account_id)
+            to_balance = await self.repository.get_balance(to_account_id)
+
+            if from_balance < amount:
+                raise InsufficientBalanceException(
+                    account_id=from_account_id,
+                    current_balance=from_balance,
+                    required_balance=amount
+                )
+
+            from_new_balance = from_balance - amount
+            to_new_balance = to_balance + amount
+
+            from_account_record = await self.repository.update_balance(from_account_id, from_new_balance)
+            to_account_record = await self.repository.update_balance(to_account_id, to_new_balance)
+
+            await self.db.commit()
 
             return {
-                "from_account": from_account,
-                "to_account": to_account,
+                "from_account": AccountResponse.model_validate(from_account_record),
+                "to_account": AccountResponse.model_validate(to_account_record),
                 "amount": amount,
                 "message": "Transfer completed successfully"
             }
+
+        except (AccountNotFoundException, InvalidAmountException, InsufficientBalanceException) as e:
+            await self.db.rollback()
+            raise
         except Exception as e:
             await self.db.rollback()
             raise e
