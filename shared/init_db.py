@@ -21,7 +21,6 @@ async def init_db() -> AsyncEngine:
             pool_recycle=3600
         )
 
-        # Testa a conexão
         async with engine.begin() as conn:
             await conn.execute(text("SELECT 1"))
 
