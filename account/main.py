@@ -1,3 +1,4 @@
+# main.py
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 import uvicorn
@@ -28,7 +29,7 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
-if __name__ == "__main__":
+def run_server():
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
@@ -36,3 +37,6 @@ if __name__ == "__main__":
         reload=settings.is_development,
         log_level="info" if settings.is_production else "debug"
     )
+
+if __name__ == "__main__":
+    run_server()

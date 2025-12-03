@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from unittest.mock import patch
-from main import app
+from account.main import app
 
 
 class TestMain:
@@ -35,21 +35,26 @@ class TestMain:
 
         assert client is not None
 
-    @patch('uvicorn.run')
-    def test_main_execution(self, mock_uvicorn_run):
+    @patch('account.main.uvicorn.run')
+    @patch('account.main.settings')
+    def test_main_execution(self, mock_settings, mock_uvicorn_run):
         # Arrange
+        mock_settings.is_development = True
+        mock_settings.is_production = False
         mock_uvicorn_run.return_value = None
 
-        with patch('main.settings') as mock_settings:
-            mock_settings.is_development = True
-            mock_settings.is_production = False
+        # Act
+        from account import main
+        main.run_server()
 
-            try:
-                import __main__
-            except:
-                pass
-
-        mock_uvicorn_run.assert_not_called()
+        # Assert
+        mock_uvicorn_run.assert_called_once_with(
+            "main:app",
+            host="0.0.0.0",
+            port=8000,
+            reload=True,
+            log_level="debug"
+        )
 
     def test_api_documentation_available(self):
         # Arrange
