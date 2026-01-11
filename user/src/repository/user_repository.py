@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from typing import List
 
-from user.src.models import users
+from user.src.models.users import users
 from user.src.schemas.user import UserCreate, UserUpdate
 from user.src.exceptions.custom_exceptions import (
     UserNotFoundException,
@@ -73,8 +73,6 @@ class UserRepository:
         result = await self.db.execute(query)
         user = result.fetchone()
 
-        await self.db.commit()
-
         return dict(user._mapping)
 
     async def update(self, user_id: int, user_data: UserUpdate) -> dict:
@@ -103,7 +101,7 @@ class UserRepository:
     async def delete(self, user_id: int) -> bool:
         await self.get_by_id(user_id)
 
-        query = delete(users).where(users.c.id == user_id)
+        query = delete(users).where(users.users.c.id == user_id)
         result = await self.db.execute(query)
         return result.rowcount > 0
 

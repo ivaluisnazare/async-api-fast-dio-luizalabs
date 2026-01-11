@@ -1,3 +1,4 @@
+#settings.py
 from urllib.parse import quote_plus
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
