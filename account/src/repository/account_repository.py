@@ -2,7 +2,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from decimal import Decimal
-from typing import List, Optional
+from typing import List
 
 from account.src.models.account import accounts
 from account.src.schemas.account import AccountCreate, AccountUpdate
