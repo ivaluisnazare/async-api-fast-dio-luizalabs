@@ -14,7 +14,7 @@ class Settings(BaseSettings):
         case_sensitive=False
     )
 
-    JWT_SECRET_KEY: str = "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"
+    JWT_SECRET_KEY: str = Field(default="")
     JWT_ALGORITHM: str = "HS256"
     RABBITMQ_URL: str = "amqp://admin:rabbit123@localhost:5672/"
 
