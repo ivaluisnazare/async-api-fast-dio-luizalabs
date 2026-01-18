@@ -35,7 +35,7 @@ jobs:
     - name: Run tests with coverage
       run: |
         find . -name "*.py" -path "*/tests/*" -exec dirname {} \; | sort -u | xargs -I {} touch {}/__init__.py || true
-        
+
         python -m pytest \
           --cov=./ \
           --cov-config=pyproject.toml \
