@@ -1,5 +1,8 @@
+#settings.py
+from urllib.parse import quote_plus
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, field_validator
+from pydantic import Field, model_validator
 from typing import Literal
 
 
@@ -11,38 +14,35 @@ class Settings(BaseSettings):
         case_sensitive=False
     )
 
-    DB_USER: str = Field(default="database", description="User")
-    DB_PASSWORD: str = Field(default="database", description="password")
-    DB_NAME: str = Field(default="db", description="database name")
-    DB_HOST: str = Field(default="localhost", description="Host address")
-    DB_PORT: str = Field(default="5432", description="Port")
+    JWT_SECRET_KEY: str = Field(default="")
+    JWT_ALGORITHM: str = "HS256"
+    RABBITMQ_URL: str = "amqp://admin:rabbit123@localhost:5672/"
 
-    DATABASE_URL: str = Field(default="", description="URL connecting to the database")
 
-    ENVIRONMENT: Literal["development", "staging", "production"] = "production"
+    DB_USER: str = Field(default="banking_operations")
+    DB_PASSWORD: str = Field(default="account123")
+    DB_NAME: str = Field(default="bank_db")
+    DB_HOST: str = Field(default="localhost")
+    DB_PORT: str = Field(default="5432")
 
-    @field_validator("DATABASE_URL", mode="before")
-    @classmethod
-    def build_database_url(cls, v, info):
-        if v:
-            return v
+    DOCKER_MODE: bool = Field(default=False)
 
-        data = info.data
+    DATABASE_URL: str | None = None
 
-        user = data.get("DB_USER", "database")
-        password = data.get("DB_PASSWORD", "database")
-        name = data.get("DB_NAME", "db")
-        host = data.get("DB_HOST", "localhost")
-        port = data.get("DB_PORT", "5432")
+    ENVIRONMENT: Literal["development", "staging", "production"] = "development"
 
-        return f"postgresql://{user}:{password}@{host}:{port}/{name}"
+    @model_validator(mode="after")
+    def build_database_url(self):
+        if self.DATABASE_URL:
+            return self
 
-    @field_validator("DATABASE_URL")
-    @classmethod
-    def validate_database_url(cls, v):
-        if not v.startswith("postgresql://"):
-            raise ValueError("DATABASE_URL must use the protocol postgresql://")
-        return v
+        print(f"Using DB host: {self.DB_HOST}")
+
+        self.DATABASE_URL = f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        print(f"DATABASE_URL: {self.DATABASE_URL}")
+        escaped_password = quote_plus(self.DB_PASSWORD)
+
+        return self
 
     @property
     def is_development(self) -> bool:
@@ -51,5 +51,6 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.ENVIRONMENT == "production"
+
 
 settings = Settings()
