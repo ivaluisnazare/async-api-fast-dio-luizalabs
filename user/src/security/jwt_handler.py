@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 from fastapi import HTTPException, status
 
 # Configuration
-SECRET_KEY = "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"
+SECRET_KEY: str = Field(default="")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
