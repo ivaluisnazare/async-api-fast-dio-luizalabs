@@ -1,25 +1,36 @@
+#auth_dependency.py
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from account.src.security.token_validator import get_token_validator
 from account.src.messaging.consumer import token_storage as storage
+import logging
 
 security = HTTPBearer()
-
+logger = logging.getLogger(__name__)
 
 async def get_current_user(
         credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> dict:
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing authentication credentials"
+        )
+
     token = credentials.credentials
 
     token_info = storage.get_token_info(token)
     if token_info:
+        logger.info(f"Token found in storage for user: {token_info['username']}")
         return {
             "user_id": token_info["user_id"],
             "username": token_info["username"],
             "token_type": token_info["token_type"],
             "source": "rabbitmq_storage"
         }
+
+    logger.info(f"Token not in storage, attempting JWT validation: {token[:20]}...")
 
     try:
         validator = get_token_validator()
@@ -33,8 +44,10 @@ async def get_current_user(
         }
 
     except HTTPException as e:
+        logger.error(f"Token validation failed: {e.detail}")
         raise e
-    except Exception:
+    except Exception as e:
+        logger.error(f"Unexpected error in token validation: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials"

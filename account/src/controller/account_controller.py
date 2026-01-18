@@ -152,7 +152,6 @@ async def deposit_to_account(
         current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Verifica se a conta pertence ao usuário
         service = AccountService(db)
         existing_account = await service.get_account_by_id(account_id)
 
@@ -181,7 +180,6 @@ async def withdraw_from_account(
         current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Verifica se a conta pertence ao usuário
         service = AccountService(db)
         existing_account = await service.get_account_by_id(account_id)
 
@@ -209,7 +207,6 @@ async def transfer_between_accounts(
         current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Verifica se a conta de origem pertence ao usuário
         service = AccountService(db)
         from_account = await service.get_account_by_id(from_account_id)
 
@@ -226,3 +223,11 @@ async def transfer_between_accounts(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "tokens_in_storage": len(storage.tokens),
+        "users_in_storage": len(storage.user_tokens)
+    }

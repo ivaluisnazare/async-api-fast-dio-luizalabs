@@ -65,8 +65,7 @@ class AuthService:
                 "token_type": "bearer",
                 "expires_in": access_token_expires.total_seconds(),
                 "issued_at": timestamp,
-                "service": "user-service",
-                "action": "validate_token"
+                "service": "user-service"
             }
 
             try:
