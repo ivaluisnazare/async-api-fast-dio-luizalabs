@@ -1,12 +1,16 @@
 #jwt_handler.py
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configuration
-SECRET_KEY: str = Field(default="")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "fallback_secret_key_here")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
