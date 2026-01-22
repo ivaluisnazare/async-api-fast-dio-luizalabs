@@ -1,11 +1,19 @@
-# Arquivos de ambiente
+# ============================================
+# ARQUIVOS DE AMBIENTE / CONFIGURAÇÃO
+# ============================================
 .env
+.env.*
+!.env.example
 .env.local
-.env.*.local
-.env.production
+.env.development.local
+.env.test.local
+.env.production.local
 .env.development
+.env.production
 
-# Python
+# ============================================
+# PYTHON
+# ============================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -26,44 +34,90 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Virtual Environment
+# ============================================
+# VIRTUAL ENVIRONMENT
+# ============================================
 .venv/
 venv/
 env/
 ENV/
 
-# IDE
+# ============================================
+# IDEs
+# ============================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Testes e cobertura
+# ============================================
+# TESTES E COBERTURA
+# ============================================
 .coverage
 .coverage.*
+.cache
 .pytest_cache/
 .mypy_cache/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
 htmlcov/
 
-# Logs
+# ============================================
+# LOGS
+# ============================================
 *.log
 logs/
 
-# Banco de dados
+# ============================================
+# BANCO DE DADOS
+# ============================================
 *.db
 *.sqlite3
+*.sqlite
+instance/
 
-# Docker
+# ============================================
+# DOCKER
+# ============================================
 docker-compose.override.yml
 
-# SO
+# ============================================
+# SISTEMA OPERACIONAL
+# ============================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Alembic (exceto as migrations)
-!alembic/versions/
+# ============================================
+# ALGORITMOS DE HASH / CACHE
+# ============================================
+*.sage.py
 
-# Sonar
+# ============================================
+# OUTROS
+# ============================================
+celerybeat-schedule
+.hypothesis/
+.ipynb_checkpoints
+
+# ============================================
+# SONAR
+# ============================================
 .scannerwork/
+
+# ============================================
+# EXCEÇÕES - Arquivos que DEVEM ser commitados
+# ============================================
+!.env.example
+!alembic/versions/
+!README.md
+!LICENSE

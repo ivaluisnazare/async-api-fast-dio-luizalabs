@@ -10,7 +10,6 @@ from account.src.service.account_service import AccountService
 from account.src.dependencies.auth_dependency import (
     get_current_user,
     get_current_user_id,
-    require_same_user
 )
 from account.src.exceptions.custom_exceptions import (
     AccountNotFoundException,
@@ -26,7 +25,6 @@ async def get_all_accounts(
         skip: int = Query(0, ge=0, description="Number of records to skip"),
         limit: int = Query(100, ge=1, le=1000, description="Number of records to return"),
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(get_current_user)  # Requer autenticação
 ):
     try:
         service = AccountService(db)
@@ -64,7 +62,6 @@ async def get_account_by_id(
 async def get_account_by_user_id(
         user_id: int,
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(require_same_user)  # Requer ser o mesmo usuário
 ):
     try:
         service = AccountService(db)
