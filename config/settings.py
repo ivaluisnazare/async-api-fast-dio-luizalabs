@@ -1,3 +1,4 @@
+#settings.py
 from urllib.parse import quote_plus
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -12,6 +13,11 @@ class Settings(BaseSettings):
         extra="ignore",
         case_sensitive=False
     )
+
+    JWT_SECRET_KEY: str = Field(default="")
+    JWT_ALGORITHM: str = "HS256"
+    RABBITMQ_URL: str = "amqp://admin:rabbit123@localhost:5672/"
+
 
     DB_USER: str = Field(default="banking_operations")
     DB_PASSWORD: str = Field(default="account123")

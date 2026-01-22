@@ -2,10 +2,12 @@ import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 import asyncio
+import sys
+import os
 from unittest.mock import AsyncMock
 
-from main import app
-
+from account.main import app
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 @pytest_asyncio.fixture(scope="session")
 async def async_client():

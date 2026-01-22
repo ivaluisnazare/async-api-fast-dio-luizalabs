@@ -17,6 +17,36 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - banking_network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: banking_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: rabbit123
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_logs:/var/log/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - banking_network
+
+networks:
+  banking_network:
+    driver: bridge
 
 volumes:
   postgres_data:
+  rabbitmq_data:
+  rabbitmq_logs:

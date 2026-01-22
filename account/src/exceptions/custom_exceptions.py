@@ -1,3 +1,4 @@
+#custom_exceptions.py
 from fastapi import HTTPException, status
 
 class AccountException(HTTPException):
