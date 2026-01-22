@@ -5,10 +5,20 @@ import uvicorn
 from shared.init_db import init_db, close_db
 from account.src.controller.account_controller import router as account_router
 from config.settings import settings
+from account.src.messaging.consumer import start_rabbitmq_consumer
+from account.src.security.token_validator import initialize_token_validator
+import asyncio
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     await init_db()
+    await initialize_token_validator(settings.JWT_SECRET_KEY)
+    asyncio.create_task(start_rabbitmq_consumer())
+    logger.info("RabbitMQ consumer started")
     yield
     await close_db()
 

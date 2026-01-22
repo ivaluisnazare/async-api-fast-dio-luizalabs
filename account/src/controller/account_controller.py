@@ -10,7 +10,6 @@ from account.src.service.account_service import AccountService
 from account.src.dependencies.auth_dependency import (
     get_current_user,
     get_current_user_id,
-    require_same_user
 )
 from account.src.exceptions.custom_exceptions import (
     AccountNotFoundException,
@@ -26,7 +25,6 @@ async def get_all_accounts(
         skip: int = Query(0, ge=0, description="Number of records to skip"),
         limit: int = Query(100, ge=1, le=1000, description="Number of records to return"),
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(get_current_user)  # Requer autenticação
 ):
     try:
         service = AccountService(db)
@@ -64,7 +62,6 @@ async def get_account_by_id(
 async def get_account_by_user_id(
         user_id: int,
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(require_same_user)  # Requer ser o mesmo usuário
 ):
     try:
         service = AccountService(db)
@@ -152,7 +149,6 @@ async def deposit_to_account(
         current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Verifica se a conta pertence ao usuário
         service = AccountService(db)
         existing_account = await service.get_account_by_id(account_id)
 
@@ -181,7 +177,6 @@ async def withdraw_from_account(
         current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Verifica se a conta pertence ao usuário
         service = AccountService(db)
         existing_account = await service.get_account_by_id(account_id)
 
@@ -209,7 +204,6 @@ async def transfer_between_accounts(
         current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Verifica se a conta de origem pertence ao usuário
         service = AccountService(db)
         from_account = await service.get_account_by_id(from_account_id)
 
@@ -226,3 +220,11 @@ async def transfer_between_accounts(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "tokens_in_storage": len(storage.tokens),
+        "users_in_storage": len(storage.user_tokens)
+    }

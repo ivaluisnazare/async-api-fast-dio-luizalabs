@@ -5,10 +5,9 @@ import json
 import logging
 from typing import Dict, Any, Optional
 from datetime import datetime
-
 logger = logging.getLogger(__name__)
 
-RABBITMQ_URL = "amqp://guest:guest@rabbitmq/"
+RABBITMQ_URL = "amqp://admin:rabbit123@localhost:5672/"
 ACCOUNT_AUTH_QUEUE = "account_auth_queue"
 TOKEN_EXCHANGE = "auth_tokens_exchange"
 TOKEN_ROUTING_KEY = "auth.token"
@@ -46,6 +45,8 @@ class TokenStorage:
         logger.info(f"Token stored for user_id: {user_id}, username: {token_data.get('username')}")
 
     def get_token_info(self, token: str) -> Optional[Dict[str, Any]]:
+        if token.startswith("Bearer "):
+            token = token[7:]
         return self.tokens.get(token)
 
     def get_user_token(self, user_id: int) -> Optional[str]:
@@ -72,21 +73,18 @@ async def process_token_message(message: aio_pika.IncomingMessage):
 
             logger.info(f"Received token message: {token_data.get('username')}")
 
-            required_fields = ["token", "user_id", "username", "action"]
+            required_fields = ["token", "user_id", "username"]
             for field in required_fields:
                 if field not in token_data:
-                    logger.error(f"Missing required field: {field}")
+                    logger.error(f"Missing required field: {field} in data: {token_data}")
                     return
 
-            if token_data.get("action") == "validate_token":
                 token_storage.store_token(token_data)
 
                 logger.info(f"Token processed successfully for user: {token_data['username']}")
-            else:
-                logger.warning(f"Unknown action: {token_data.get('action')}")
 
         except json.JSONDecodeError as e:
-            logger.error(f"Failed to decode JSON: {e}")
+            logger.error(f"Failed to decode JSON: {e}, body: {message.body}")
         except Exception as e:
             logger.error(f"Error processing token message: {e}")
 
@@ -97,6 +95,7 @@ async def consume_token_messages():
 
     for attempt in range(max_retries):
         try:
+            logger.info(f"Attempting to connect to RabbitMQ (attempt {attempt + 1})")
             connection = await aio_pika.connect_robust(RABBITMQ_URL)
             logger.info("Connected to RabbitMQ for consuming")
 
@@ -119,18 +118,25 @@ async def consume_token_messages():
                     }
                 )
 
-                dlq = await channel.declare_queue(
+                await channel.declare_queue(
                     f'{ACCOUNT_AUTH_QUEUE}.dlq',
                     durable=True
                 )
 
                 await queue.bind(exchange, TOKEN_ROUTING_KEY)
 
+                logger.info(
+                    f"Queue {ACCOUNT_AUTH_QUEUE} bound to exchange {TOKEN_EXCHANGE} with routing key {TOKEN_ROUTING_KEY}")
                 logger.info(f"Starting to consume from queue: {ACCOUNT_AUTH_QUEUE}")
 
                 await queue.consume(process_token_message)
+                logger.info("Consumer started successfully")
 
-                await asyncio.Future()  # Runs forever
+                try:
+                    await asyncio.Future()
+                except asyncio.CancelledError:
+                    logger.info("Consumer task cancelled")
+                    break
 
         except ConnectionError as e:
             logger.error(f"Connection attempt {attempt + 1} failed: {e}")
@@ -147,5 +153,6 @@ async def consume_token_messages():
 async def start_rabbitmq_consumer():
 
     logger.info("Starting RabbitMQ consumer...")
-    asyncio.create_task(consume_token_messages())
-    logger.info("RabbitMQ consumer started in background")
+    task = asyncio.create_task(consume_token_messages())
+    logger.info("RabbitMQ consumer task created")
+    return task
