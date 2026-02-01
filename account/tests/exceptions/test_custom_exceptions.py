@@ -1,8 +1,9 @@
 import pytest
 from fastapi import HTTPException, status
 
-from account.src.exceptions.custom_exceptions import AccountNotFoundException, InsufficientBalanceException, \
-    DuplicateAccountException, InvalidAmountException, AccountException
+from account.src.exceptions.custom_exceptions import (
+    AccountException, AccountNotFoundException, DuplicateAccountException,
+    InsufficientBalanceException, InvalidAmountException)
 
 
 class TestAccountExceptions:
@@ -15,7 +16,7 @@ class TestAccountExceptions:
             AccountNotFoundException,
             InsufficientBalanceException,
             DuplicateAccountException,
-            InvalidAmountException
+            InvalidAmountException,
         ]
 
         for exception_class in specific_exceptions:
@@ -62,7 +63,7 @@ class TestInsufficientBalanceException:
         exception = InsufficientBalanceException(
             account_id=account_id,
             current_balance=current_balance,
-            required_balance=required_balance
+            required_balance=required_balance,
         )
 
         assert exception.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
@@ -80,7 +81,7 @@ class TestInsufficientBalanceException:
         exception = InsufficientBalanceException(
             account_id=account_id,
             current_balance=current_balance,
-            required_balance=required_balance
+            required_balance=required_balance,
         )
 
         expected_detail = (
@@ -140,9 +141,7 @@ class TestExceptionRaising:
     def test_insufficient_balance_exception_raising(self):
         with pytest.raises(InsufficientBalanceException) as exc_info:
             raise InsufficientBalanceException(
-                account_id=111,
-                current_balance=10.0,
-                required_balance=100.0
+                account_id=111, current_balance=10.0, required_balance=100.0
             )
 
         assert exc_info.value.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
@@ -160,12 +159,15 @@ class TestExceptionRaising:
             assert isinstance(exception, parent_class)
 
 
-@pytest.mark.parametrize("account_id,user_id,expected_detail", [
-    (None, None, "Account not found"),
-    (1, None, "Account with id 1 not found"),
-    (None, 2, "Account for user 2 not found"),
-    (1, 2, "Account with id 1 not found"),
-])
+@pytest.mark.parametrize(
+    "account_id,user_id,expected_detail",
+    [
+        (None, None, "Account not found"),
+        (1, None, "Account with id 1 not found"),
+        (None, 2, "Account for user 2 not found"),
+        (1, 2, "Account with id 1 not found"),
+    ],
+)
 def test_account_not_found_parametrized(account_id, user_id, expected_detail):
     exception = AccountNotFoundException(account_id=account_id, user_id=user_id)
     assert exception.detail == expected_detail

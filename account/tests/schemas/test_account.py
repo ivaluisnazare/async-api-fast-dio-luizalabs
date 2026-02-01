@@ -2,10 +2,11 @@ from datetime import datetime
 from decimal import Decimal
 
 import pytest
+from pydantic import ValidationError
+
 from account.src.schemas.account import (AccountBalanceResponse, AccountBase,
                                          AccountCreate, AccountResponse,
                                          AccountUpdate)
-from pydantic import ValidationError
 
 
 class TestAccountBase:

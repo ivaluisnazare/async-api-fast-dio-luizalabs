@@ -1,17 +1,19 @@
+import os
+import sys
+from typing import AsyncGenerator
+from unittest.mock import AsyncMock
+
 import pytest
 import pytest_asyncio
-import sys
-import os
-from unittest.mock import AsyncMock
 from fastapi.testclient import TestClient
-from httpx import AsyncClient, ASGITransport
-from typing import AsyncGenerator
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from httpx import ASGITransport, AsyncClient
 
 from account.main import app
+from account.src.dependencies.auth_dependency import (get_current_user,
+                                                      get_current_user_id)
 from shared.database import get_db
-from account.src.dependencies.auth_dependency import get_current_user, get_current_user_id
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 
 @pytest_asyncio.fixture
@@ -34,7 +36,7 @@ async def client(mock_db_session) -> AsyncGenerator[AsyncClient, None]:
         "user_id": 1,
         "username": "test_user",
         "email": "test@example.com",
-        "source": "jwt_validation"
+        "source": "jwt_validation",
     }
 
     async def override_get_current_user():
@@ -48,8 +50,7 @@ async def client(mock_db_session) -> AsyncGenerator[AsyncClient, None]:
     app.dependency_overrides[get_current_user_id] = override_get_current_user_id
 
     async with AsyncClient(
-            transport=ASGITransport(app=app),
-            base_url="http://test"
+        transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
         yield ac
 
@@ -63,6 +64,4 @@ def test_client():
 
 @pytest.fixture
 def auth_headers():
-    return {
-        "Authorization": "Bearer mock_token_12345"
-    }
+    return {"Authorization": "Bearer mock_token_12345"}

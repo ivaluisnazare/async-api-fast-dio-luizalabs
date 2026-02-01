@@ -1,9 +1,9 @@
-#token_validator.py
 import logging
-from typing import Dict, Any, Optional
-from fastapi import HTTPException, status
-from datetime import datetime, UTC
+from datetime import UTC, datetime
+from typing import Any, Dict, Optional
+
 import jwt
+from fastapi import HTTPException, status
 
 logger = logging.getLogger(__name__)
 
@@ -19,23 +19,18 @@ class TokenValidator:
             if token.startswith("Bearer "):
                 token = token[7:]
 
-            payload = jwt.decode(
-                token,
-                self.secret_key,
-                algorithms=[self.algorithm]
-            )
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
 
             exp = payload.get("exp")
             if exp and datetime.now(UTC).timestamp() > exp:
                 raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Token expired"
+                    status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
                 )
 
             if "sub" not in payload:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid token: missing subject"
+                    detail="Invalid token: missing subject",
                 )
 
             return {
@@ -43,26 +38,25 @@ class TokenValidator:
                 "user_id": payload.get("user_id"),
                 "email": payload.get("email"),
                 "exp": payload.get("exp"),
-                "iat": payload.get("iat")
+                "iat": payload.get("iat"),
             }
 
         except jwt.ExpiredSignatureError:
             logger.warning(f"Token expired: {token[:50]}...")
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token expired"
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
             )
         except jwt.InvalidTokenError as e:
             logger.error(f"Invalid token: {str(e)}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Invalid token: {str(e)}"
+                detail=f"Invalid token: {str(e)}",
             )
         except Exception as e:
             logger.error(f"Token validation error: {str(e)}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Token validation failed: {str(e)}"
+                detail=f"Token validation failed: {str(e)}",
             )
 
 
