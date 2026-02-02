@@ -1,14 +1,14 @@
-#user_repository.py
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
 from typing import List
 
+from sqlalchemy import delete, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from user.src.exceptions.custom_exceptions import (DuplicateUserException,
+                                                   InactiveUserException,
+                                                   InvalidCredentialsException,
+                                                   UserNotFoundException)
 from user.src.models.users import users
 from user.src.schemas.user import UserCreate, UserUpdate
-from user.src.exceptions.custom_exceptions import (
-    UserNotFoundException,
-    DuplicateUserException, InvalidCredentialsException, InactiveUserException
-)
 
 
 class UserRepository:
@@ -63,12 +63,16 @@ class UserRepository:
         except UserNotFoundException:
             pass
 
-        query = users.insert().values(
-            username=user_data.username,
-            email=user_data.email,
-            password=hashed_password,
-            full_name=user_data.full_name
-        ).returning(users)
+        query = (
+            users.insert()
+            .values(
+                username=user_data.username,
+                email=user_data.email,
+                password=hashed_password,
+                full_name=user_data.full_name,
+            )
+            .returning(users)
+        )
 
         result = await self.db.execute(query)
         user = result.fetchone()
@@ -110,10 +114,10 @@ class UserRepository:
 
         try:
             user = await self.get_by_username(username)
-            if not verify_password(password, user['password']):
+            if not verify_password(password, user["password"]):
                 raise InvalidCredentialsException()
 
-            if not user['is_active']:
+            if not user["is_active"]:
                 raise InactiveUserException()
 
             return user

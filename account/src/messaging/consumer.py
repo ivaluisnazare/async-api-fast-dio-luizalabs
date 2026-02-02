@@ -1,10 +1,11 @@
-#consumer.py
 import asyncio
-import aio_pika
 import json
 import logging
-from typing import Dict, Any, Optional
 from datetime import datetime
+from typing import Any, Dict, Optional
+
+import aio_pika
+
 logger = logging.getLogger(__name__)
 
 RABBITMQ_URL = "amqp://admin:rabbit123@localhost:5672/"
@@ -37,12 +38,14 @@ class TokenStorage:
             "token_type": token_data.get("token_type"),
             "expires_in": token_data.get("expires_in"),
             "issued_at": token_data.get("issued_at"),
-            "received_at": datetime.now().isoformat()
+            "received_at": datetime.now().isoformat(),
         }
 
         self.user_tokens[user_id] = token
 
-        logger.info(f"Token stored for user_id: {user_id}, username: {token_data.get('username')}")
+        logger.info(
+            f"Token stored for user_id: {user_id}, username: {token_data.get('username')}"
+        )
 
     def get_token_info(self, token: str) -> Optional[Dict[str, Any]]:
         if token.startswith("Bearer "):
@@ -76,12 +79,16 @@ async def process_token_message(message: aio_pika.IncomingMessage):
             required_fields = ["token", "user_id", "username"]
             for field in required_fields:
                 if field not in token_data:
-                    logger.error(f"Missing required field: {field} in data: {token_data}")
+                    logger.error(
+                        f"Missing required field: {field} in data: {token_data}"
+                    )
                     return
 
                 token_storage.store_token(token_data)
 
-                logger.info(f"Token processed successfully for user: {token_data['username']}")
+                logger.info(
+                    f"Token processed successfully for user: {token_data['username']}"
+                )
 
         except json.JSONDecodeError as e:
             logger.error(f"Failed to decode JSON: {e}, body: {message.body}")
@@ -104,29 +111,25 @@ async def consume_token_messages():
 
                 # Declara exchange
                 exchange = await channel.declare_exchange(
-                    TOKEN_EXCHANGE,
-                    aio_pika.ExchangeType.DIRECT,
-                    durable=True
+                    TOKEN_EXCHANGE, aio_pika.ExchangeType.DIRECT, durable=True
                 )
 
                 queue = await channel.declare_queue(
                     ACCOUNT_AUTH_QUEUE,
                     durable=True,
                     arguments={
-                        'x-dead-letter-exchange': '',
-                        'x-dead-letter-routing-key': f'{ACCOUNT_AUTH_QUEUE}.dlq'
-                    }
+                        "x-dead-letter-exchange": "",
+                        "x-dead-letter-routing-key": f"{ACCOUNT_AUTH_QUEUE}.dlq",
+                    },
                 )
 
-                await channel.declare_queue(
-                    f'{ACCOUNT_AUTH_QUEUE}.dlq',
-                    durable=True
-                )
+                await channel.declare_queue(f"{ACCOUNT_AUTH_QUEUE}.dlq", durable=True)
 
                 await queue.bind(exchange, TOKEN_ROUTING_KEY)
 
                 logger.info(
-                    f"Queue {ACCOUNT_AUTH_QUEUE} bound to exchange {TOKEN_EXCHANGE} with routing key {TOKEN_ROUTING_KEY}")
+                    f"Queue {ACCOUNT_AUTH_QUEUE} bound to exchange {TOKEN_EXCHANGE} with routing key {TOKEN_ROUTING_KEY}"
+                )
                 logger.info(f"Starting to consume from queue: {ACCOUNT_AUTH_QUEUE}")
 
                 await queue.consume(process_token_message)

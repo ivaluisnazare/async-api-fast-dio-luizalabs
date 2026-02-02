@@ -1,14 +1,15 @@
-#auth_service.py
 import asyncio
-from datetime import datetime, timedelta
-from sqlalchemy.ext.asyncio import AsyncSession
 import logging
+from datetime import datetime, timedelta
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from user.src.exceptions.custom_exceptions import InvalidCredentialsException
+from user.src.messaging.rabbitmq import (send_login_message,
+                                         send_token_to_account_service)
 from user.src.repository.user_repository import UserRepository
-from user.src.schemas.user import UserLogin, Token
+from user.src.schemas.user import Token, UserLogin
 from user.src.security.jwt_handler import create_access_token
-from user.src.messaging.rabbitmq import send_login_message, send_token_to_account_service
 
 logger = logging.getLogger(__name__)
 
@@ -21,51 +22,48 @@ class AuthService:
     async def login(self, user_data: UserLogin) -> Token:
         try:
             user = await self.repository.authenticate_user(
-                user_data.username,
-                user_data.password
+                user_data.username, user_data.password
             )
 
             if not user:
-                raise InvalidCredentialsException(
-                    "Invalid username or password"
-                )
+                raise InvalidCredentialsException("Invalid username or password")
 
             access_token_expires = timedelta(minutes=30)
             access_token = create_access_token(
                 data={
-                    "sub": user['username'],
-                    "user_id": user['id'],
-                    "email": user.get('email', '')
+                    "sub": user["username"],
+                    "user_id": user["id"],
+                    "email": user.get("email", ""),
                 },
-                expires_delta=access_token_expires
+                expires_delta=access_token_expires,
             )
 
             token = Token(
                 access_token=access_token,
                 token_type="bearer",
-                user_id=user['id'],
-                username=user['username'],
-                expires_in=access_token_expires.total_seconds()
+                user_id=user["id"],
+                username=user["username"],
+                expires_in=access_token_expires.total_seconds(),
             )
 
             timestamp = datetime.utcnow().isoformat()
 
             login_data = {
-                "username": user['username'],
-                "user_id": user['id'],
+                "username": user["username"],
+                "user_id": user["id"],
                 "action": "user_login",
                 "timestamp": timestamp,
-                "service": "user-service"
+                "service": "user-service",
             }
 
             token_data = {
                 "token": access_token,
-                "user_id": user['id'],
-                "username": user['username'],
+                "user_id": user["id"],
+                "username": user["username"],
                 "token_type": "bearer",
                 "expires_in": access_token_expires.total_seconds(),
                 "issued_at": timestamp,
-                "service": "user-service"
+                "service": "user-service",
             }
 
             try:
@@ -80,7 +78,7 @@ class AuthService:
 
             return token
 
-        except InvalidCredentialsException as e:
+        except InvalidCredentialsException:
             logger.warning(f"Failed login attempt for username: {user_data.username}")
             raise
 
@@ -91,4 +89,5 @@ class AuthService:
     @staticmethod
     async def verify_token(token: str) -> dict:
         from user.src.security.jwt_handler import verify_token
+
         return verify_token(token)

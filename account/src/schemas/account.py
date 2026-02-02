@@ -1,13 +1,15 @@
-#schemas/account.py
-from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
+from pydantic import BaseModel, ConfigDict, Field
+
 
 class AccountBase(BaseModel):
     user_id: int = Field(..., description="user Id")
-    balance: Decimal = Field(0, ge=0, description="account balance", max_digits=10, decimal_places=2)
+    balance: Decimal = Field(
+        0, ge=0, description="account balance", max_digits=10, decimal_places=2
+    )
 
 
 class AccountCreate(AccountBase):
@@ -15,7 +17,9 @@ class AccountCreate(AccountBase):
 
 
 class AccountUpdate(BaseModel):
-    balance: Optional[Decimal] = Field(None, ge=0, description="account balance", max_digits=10, decimal_places=2)
+    balance: Optional[Decimal] = Field(
+        None, ge=0, description="account balance", max_digits=10, decimal_places=2
+    )
 
 
 class AccountResponse(AccountBase):
