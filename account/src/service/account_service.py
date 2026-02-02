@@ -1,14 +1,14 @@
-# account_service.py
-from sqlalchemy.ext.asyncio import AsyncSession
 from decimal import Decimal
 from typing import List
 
-from account.src.repository.account_repository import AccountRepository
-from account.src.schemas.account import AccountCreate, AccountUpdate, AccountResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from account.src.exceptions.custom_exceptions import (
-    InsufficientBalanceException,
-    InvalidAmountException, AccountNotFoundException
-)
+    AccountNotFoundException, InsufficientBalanceException,
+    InvalidAmountException)
+from account.src.repository.account_repository import AccountRepository
+from account.src.schemas.account import (AccountCreate, AccountResponse,
+                                         AccountUpdate)
 
 
 class AccountService:
@@ -16,7 +16,9 @@ class AccountService:
         self.repository = AccountRepository(db)
         self.db = db
 
-    async def get_all_accounts(self, skip: int = 0, limit: int = 100) -> List[AccountResponse]:
+    async def get_all_accounts(
+        self, skip: int = 0, limit: int = 100
+    ) -> List[AccountResponse]:
         account_records = await self.repository.get_all(skip, limit)
         return [AccountResponse.model_validate(account) for account in account_records]
 
@@ -37,7 +39,9 @@ class AccountService:
             await self.db.rollback()
             raise
 
-    async def update_account(self, account_id: int, account_data: AccountUpdate) -> AccountResponse:
+    async def update_account(
+        self, account_id: int, account_data: AccountUpdate
+    ) -> AccountResponse:
         try:
             account_record = await self.repository.update(account_id, account_data)
             await self.db.commit()
@@ -63,7 +67,9 @@ class AccountService:
             current_balance = await self.repository.get_balance(account_id)
             new_balance = current_balance + amount
 
-            account_record = await self.repository.update_balance(account_id, new_balance)
+            account_record = await self.repository.update_balance(
+                account_id, new_balance
+            )
             await self.db.commit()
             return AccountResponse.model_validate(account_record)
         except Exception:
@@ -81,18 +87,22 @@ class AccountService:
                 raise InsufficientBalanceException(
                     account_id=account_id,
                     current_balance=current_balance,
-                    required_balance=amount
+                    required_balance=amount,
                 )
 
             new_balance = current_balance - amount
-            account_record = await self.repository.update_balance(account_id, new_balance)
+            account_record = await self.repository.update_balance(
+                account_id, new_balance
+            )
             await self.db.commit()
             return AccountResponse.model_validate(account_record)
         except Exception:
             await self.db.rollback()
             raise
 
-    async def transfer(self, from_account_id: int, to_account_id: int, amount: Decimal) -> dict:
+    async def transfer(
+        self, from_account_id: int, to_account_id: int, amount: Decimal
+    ) -> dict:
         if amount <= 0:
             raise InvalidAmountException(amount)
 
@@ -107,14 +117,18 @@ class AccountService:
                 raise InsufficientBalanceException(
                     account_id=from_account_id,
                     current_balance=from_balance,
-                    required_balance=amount
+                    required_balance=amount,
                 )
 
             from_new_balance = from_balance - amount
             to_new_balance = to_balance + amount
 
-            from_account_record = await self.repository.update_balance(from_account_id, from_new_balance)
-            to_account_record = await self.repository.update_balance(to_account_id, to_new_balance)
+            from_account_record = await self.repository.update_balance(
+                from_account_id, from_new_balance
+            )
+            to_account_record = await self.repository.update_balance(
+                to_account_id, to_new_balance
+            )
 
             await self.db.commit()
 
@@ -122,10 +136,14 @@ class AccountService:
                 "from_account": AccountResponse.model_validate(from_account_record),
                 "to_account": AccountResponse.model_validate(to_account_record),
                 "amount": amount,
-                "message": "Transfer completed successfully"
+                "message": "Transfer completed successfully",
             }
 
-        except (AccountNotFoundException, InvalidAmountException, InsufficientBalanceException) as e:
+        except (
+            AccountNotFoundException,
+            InvalidAmountException,
+            InsufficientBalanceException,
+        ):
             await self.db.rollback()
             raise
         except Exception as e:
