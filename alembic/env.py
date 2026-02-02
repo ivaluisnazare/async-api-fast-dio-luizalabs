@@ -1,23 +1,21 @@
+# alembic/env.py
+import asyncio
 from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
-import asyncio
-import os
+
 import sys
+from pathlib import Path
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../src'))
+sys.path.append(str(Path(__file__).parent.parent))
 
-from shared.database import metadata
 from config.settings import settings
+from shared.database import metadata
 
 config = context.config
-
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
-
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
 
 target_metadata = metadata
 
@@ -40,8 +38,9 @@ def do_run_migrations(connection: Connection) -> None:
         context.run_migrations()
 
 async def run_async_migrations() -> None:
-    connectable = create_async_engine(
-        config.get_main_option("sqlalchemy.url"),
+    connectable = async_engine_from_config(
+        config.get_section(config.config_ini_section),
+        prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 

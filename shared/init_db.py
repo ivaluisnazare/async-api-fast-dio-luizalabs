@@ -1,3 +1,4 @@
+#init_db.py
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from sqlalchemy import text
 from config.settings import settings
@@ -21,7 +22,6 @@ async def init_db() -> AsyncEngine:
             pool_recycle=3600
         )
 
-        # Testa a conexão
         async with engine.begin() as conn:
             await conn.execute(text("SELECT 1"))
 

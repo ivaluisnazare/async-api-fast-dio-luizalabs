@@ -1,3 +1,4 @@
+#database.py
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy import MetaData
 from config.settings import settings
