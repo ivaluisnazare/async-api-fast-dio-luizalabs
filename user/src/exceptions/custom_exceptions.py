@@ -1,8 +1,11 @@
 from fastapi import HTTPException, status
 
+
 class UserException(HTTPException):
     """Base exception for user-related errors"""
+
     pass
+
 
 class UserNotFoundException(UserException):
     def __init__(self, user_id: int = None, username: str = None):
@@ -14,6 +17,7 @@ class UserNotFoundException(UserException):
             detail = "User not found"
         super().__init__(status_code=status.HTTP_404_NOT_FOUND, detail=detail)
 
+
 class DuplicateUserException(UserException):
     def __init__(self, username: str = None, email: str = None):
         if username:
@@ -24,10 +28,12 @@ class DuplicateUserException(UserException):
             detail = "User already exists"
         super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
 
+
 class InvalidCredentialsException(UserException):
     def __init__(self):
         detail = "Invalid username or password"
         super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
+
 
 class InactiveUserException(UserException):
     def __init__(self):

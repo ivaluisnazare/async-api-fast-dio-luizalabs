@@ -1,17 +1,20 @@
-#user_service.py
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from user.src.repository.user_repository import UserRepository
-from user.src.schemas.user import UserCreate, UserUpdate, UserResponse
+from user.src.schemas.user import UserCreate, UserResponse, UserUpdate
 from user.src.security.jwt_handler import get_password_hash
+
 
 class UserService:
     def __init__(self, db: AsyncSession):
         self.repository = UserRepository(db)
         self.db = db
 
-    async def get_all_users(self, skip: int = 0, limit: int = 100) -> List[UserResponse]:
+    async def get_all_users(
+        self, skip: int = 0, limit: int = 100
+    ) -> List[UserResponse]:
         user_records = await self.repository.get_all(skip, limit)
         return [UserResponse.model_validate(user) for user in user_records]
 

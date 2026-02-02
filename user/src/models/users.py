@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy.sql import func
+
 from shared.database import metadata
 
 users = sa.Table(
@@ -12,5 +13,10 @@ users = sa.Table(
     sa.Column("full_name", sa.String(100), nullable=True),
     sa.Column("is_active", sa.Boolean, default=True),
     sa.Column("created_at", sa.TIMESTAMP(timezone=True), default=func.now()),
-    sa.Column("updated_at", sa.TIMESTAMP(timezone=True), default=func.now(), onupdate=func.now()),
+    sa.Column(
+        "updated_at",
+        sa.TIMESTAMP(timezone=True),
+        default=func.now(),
+        onupdate=func.now(),
+    ),
 )
