@@ -23,7 +23,7 @@ async def get_current_user(
 
     token_info = storage.get_token_info(token)
     if token_info:
-        logger.info(f"Token found in storage for user: " f"{token_info['username']}")
+        logger.info(f"Token found in storage for user: {token_info['username']}")
         return {
             "user_id": token_info["user_id"],
             "username": token_info["username"],
@@ -31,7 +31,7 @@ async def get_current_user(
             "source": "rabbitmq_storage",
         }
 
-    logger.info(f"Token not in storage, " f"attempting JWT validation: {token[:20]}...")
+    logger.info(f"Token not in storage, attempting JWT validation: {token[:20]}...")
 
     try:
         validator = get_token_validator()
@@ -55,7 +55,7 @@ async def get_current_user(
         )
 
 
-async def get_current_user_id(current_user: dict = Depends(get_current_user)) -> int:
+def get_current_user_id(current_user: dict = Depends(get_current_user)) -> int:
     return current_user["user_id"]
 
 
