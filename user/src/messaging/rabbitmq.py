@@ -1,10 +1,10 @@
-#rabbitmq.py
 import asyncio
-import aio_pika
 import json
-from typing import Dict, Any
-from contextlib import asynccontextmanager
 import logging
+from contextlib import asynccontextmanager
+from typing import Any, Dict
+
+import aio_pika
 
 logger = logging.getLogger(__name__)
 
@@ -18,17 +18,14 @@ TOKEN_ROUTING_KEY = "auth.token"
 async def get_rabbitmq_connection(max_retries=3):
     for attempt in range(max_retries):
         try:
-            connection = await aio_pika.connect_robust(
-                RABBITMQ_URL,
-                timeout=10
-            )
+            connection = await aio_pika.connect_robust(RABBITMQ_URL, timeout=10)
             yield connection
             await connection.close()
             return
         except Exception as e:
             logger.error(f"Connection attempt {attempt + 1} failed: {e}")
             if attempt < max_retries - 1:
-                await asyncio.sleep(2 ** attempt)
+                await asyncio.sleep(2**attempt)
             else:
                 raise ConnectionError(
                     f"Failed to connect to RabbitMQ after {max_retries} attempts"
@@ -46,16 +43,16 @@ async def send_login_message(login_data: Dict[str, Any]):
                     TOKEN_EXCHANGE,
                     aio_pika.ExchangeType.DIRECT,
                     durable=True,
-                    auto_delete=False
+                    auto_delete=False,
                 )
 
                 queue = await channel.declare_queue(
                     LOGIN_QUEUE,
                     durable=True,
                     arguments={
-                        'x-dead-letter-exchange': '',  # DLQ config
-                        'x-dead-letter-routing-key': f'{LOGIN_QUEUE}.dlq'
-                    }
+                        "x-dead-letter-exchange": "",  # DLQ config
+                        "x-dead-letter-routing-key": f"{LOGIN_QUEUE}.dlq",
+                    },
                 )
 
                 await queue.bind(exchange, TOKEN_ROUTING_KEY)
@@ -68,14 +65,11 @@ async def send_login_message(login_data: Dict[str, Any]):
                     headers={
                         "service": "user-service",
                         "event_type": "user_login",
-                        "timestamp": login_data.get("timestamp")
-                    }
+                        "timestamp": login_data.get("timestamp"),
+                    },
                 )
 
-                await exchange.publish(
-                    message,
-                    routing_key=TOKEN_ROUTING_KEY
-                )
+                await exchange.publish(message, routing_key=TOKEN_ROUTING_KEY)
 
                 logger.info(f"Login message sent for user: {login_data['username']}")
                 return True
@@ -93,13 +87,13 @@ async def send_token_to_account_service(token_data: Dict[str, Any]):
                 channel = await connection.channel()
 
                 account_queue_name = "account_auth_queue"
-                account_queue = await channel.declare_queue(
+                await channel.declare_queue(
                     account_queue_name,
                     durable=True,
                     arguments={
-                        'x-dead-letter-exchange': '',
-                        'x-dead-letter-routing-key': f'{account_queue_name}.dlq'
-                    }
+                        "x-dead-letter-exchange": "",
+                        "x-dead-letter-routing-key": f"{account_queue_name}.dlq",
+                    },
                 )
 
                 message_body = json.dumps(token_data).encode()
@@ -110,16 +104,17 @@ async def send_token_to_account_service(token_data: Dict[str, Any]):
                     headers={
                         "service": "user-service",
                         "event_type": "auth_token",
-                        "timestamp": token_data.get("timestamp")
-                    }
+                        "timestamp": token_data.get("timestamp"),
+                    },
                 )
 
                 await channel.default_exchange.publish(
-                    message,
-                    routing_key=account_queue_name
+                    message, routing_key=account_queue_name
                 )
 
-                logger.info(f"Token sent to account-service for user: {token_data['username']}")
+                logger.info(
+                    f"Token sent to account-service for user: {token_data['username']}"
+                )
                 return True
 
     except Exception as e:
@@ -135,42 +130,34 @@ async def setup_rabbitmq():
                 channel = await connection.channel()
 
                 exchange = await channel.declare_exchange(
-                    TOKEN_EXCHANGE,
-                    aio_pika.ExchangeType.DIRECT,
-                    durable=True
+                    TOKEN_EXCHANGE, aio_pika.ExchangeType.DIRECT, durable=True
                 )
 
                 login_queue = await channel.declare_queue(
                     LOGIN_QUEUE,
                     durable=True,
                     arguments={
-                        'x-dead-letter-exchange': '',
-                        'x-dead-letter-routing-key': f'{LOGIN_QUEUE}.dlq'
-                    }
+                        "x-dead-letter-exchange": "",
+                        "x-dead-letter-routing-key": f"{LOGIN_QUEUE}.dlq",
+                    },
                 )
 
                 # DLQ (Dead Letter Queue)
-                dlq = await channel.declare_queue(
-                    f'{LOGIN_QUEUE}.dlq',
-                    durable=True
-                )
+                await channel.declare_queue(f"{LOGIN_QUEUE}.dlq", durable=True)
 
                 await login_queue.bind(exchange, TOKEN_ROUTING_KEY)
 
-                account_queue = await channel.declare_queue(
+                await channel.declare_queue(
                     "account_auth_queue",
                     durable=True,
                     arguments={
-                        'x-dead-letter-exchange': '',
-                        'x-dead-letter-routing-key': 'account_auth_queue.dlq'
-                    }
+                        "x-dead-letter-exchange": "",
+                        "x-dead-letter-routing-key": "account_auth_queue.dlq",
+                    },
                 )
 
                 # DLQ account-service
-                account_dlq = await channel.declare_queue(
-                    "account_auth_queue.dlq",
-                    durable=True
-                )
+                await channel.declare_queue("account_auth_queue.dlq", durable=True)
 
                 logger.info("RabbitMQ setup completed successfully")
                 return True

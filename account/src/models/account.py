@@ -1,6 +1,6 @@
-#models/account
 import sqlalchemy as sa
 from sqlalchemy.sql import func
+
 from shared.database import metadata
 
 accounts = sa.Table(

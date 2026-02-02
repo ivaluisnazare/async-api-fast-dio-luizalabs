@@ -1,15 +1,13 @@
-# account_repository.py
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
 from decimal import Decimal
 from typing import List
 
+from sqlalchemy import delete, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from account.src.exceptions.custom_exceptions import (
+    AccountNotFoundException, DuplicateAccountException)
 from account.src.models.account import accounts
 from account.src.schemas.account import AccountCreate, AccountUpdate
-from account.src.exceptions.custom_exceptions import (
-    AccountNotFoundException,
-    DuplicateAccountException
-)
 
 
 class AccountRepository:
@@ -52,10 +50,11 @@ class AccountRepository:
             # Account doesn't exist, we can proceed
             pass
 
-        query = accounts.insert().values(
-            user_id=account_data.user_id,
-            balance=account_data.balance
-        ).returning(accounts)
+        query = (
+            accounts.insert()
+            .values(user_id=account_data.user_id, balance=account_data.balance)
+            .returning(accounts)
+        )
 
         result = await self.db.execute(query)
         account = result.fetchone()
@@ -115,7 +114,7 @@ class AccountRepository:
     async def get_balance(self, account_id: int) -> Decimal:
         # This will raise AccountNotFoundException if account doesn't exist
         account = await self.get_by_id(account_id)
-        return account['balance']
+        return account["balance"]
 
     async def account_exists_by_id(self, account_id: int) -> bool:
         """Check if account exists without throwing exception"""

@@ -1,9 +1,12 @@
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
+
 import uvicorn
-from shared.init_db import init_db, close_db
-from user.src.controller.user_controller import (router as user_router)
+from fastapi import FastAPI
+
 from config.settings import settings
+from shared.init_db import close_db, init_db
+from user.src.controller.user_controller import router as user_router
+
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -11,22 +14,26 @@ async def lifespan(_app: FastAPI):
     yield
     await close_db()
 
+
 app = FastAPI(
     title="User Management API",
     description="RESTful API for managing bank users",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 app.include_router(user_router)
+
 
 @app.get("/")
 async def root():
     return {"message": "User Management API", "version": "1.0.0"}
 
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
 
 if __name__ == "__main__":
     uvicorn.run(
@@ -34,5 +41,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8081,
         reload=settings.is_development,
-        log_level="info" if settings.is_production else "debug"
+        log_level="info" if settings.is_production else "debug",
     )
