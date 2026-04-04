@@ -9,7 +9,7 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from user.src.main import app
+from user.main import app
 from user.src.repository.user_repository import UserRepository
 from user.src.schemas.user import UserCreate, UserResponse, UserUpdate
 from user.src.service.user_service import UserService
