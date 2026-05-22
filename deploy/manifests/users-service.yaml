@@ -1,12 +1,14 @@
-# user-service.yaml
+# users-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-service
+  name: users-service
   namespace: banking-operations
+  labels:
+    app: users-service
 spec:
   selector:
-    app: user
+    app: users-service
   ports:
   - port: 8081
     targetPort: 8081

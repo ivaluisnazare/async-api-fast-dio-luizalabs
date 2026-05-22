@@ -1,9 +1,11 @@
-# configmap.yaml
+# user-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app-config
+  name: users-config
   namespace: banking-operations
+  labels:
+    app: users-service
 data:
   DB_HOST: "postgres-service"
   DB_PORT: "5432"

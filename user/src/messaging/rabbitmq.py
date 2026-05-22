@@ -3,12 +3,14 @@ import json
 import logging
 from contextlib import asynccontextmanager
 from typing import Any, Dict
+from src.config.settings import settings
 
 import aio_pika
 
 logger = logging.getLogger(__name__)
 
-RABBITMQ_URL = "amqp://admin:rabbit123@localhost:5672/"
+
+RABBITMQ_URL = settings.RABBITMQ_URL
 LOGIN_QUEUE = "user_login_queue"
 TOKEN_EXCHANGE = "auth_tokens_exchange"
 TOKEN_ROUTING_KEY = "auth.token"

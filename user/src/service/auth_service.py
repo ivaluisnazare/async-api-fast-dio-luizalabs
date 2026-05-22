@@ -4,12 +4,12 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from user.src.exceptions.custom_exceptions import InvalidCredentialsException
-from user.src.messaging.rabbitmq import (send_login_message,
+from src.exceptions.custom_exceptions import InvalidCredentialsException
+from src.messaging.rabbitmq import (send_login_message,
                                          send_token_to_account_service)
-from user.src.repository.user_repository import UserRepository
-from user.src.schemas.user import Token, UserLogin
-from user.src.security.jwt_handler import create_access_token
+from src.repository.user_repository import UserRepository
+from src.schemas.users import Token, UserLogin
+from src.security.jwt_handler import create_access_token
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +88,6 @@ class AuthService:
 
     @staticmethod
     async def verify_token(token: str) -> dict:
-        from user.src.security.jwt_handler import verify_token
+        from src.security.jwt_handler import verify_token
 
         return verify_token(token)

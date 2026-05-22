@@ -2,7 +2,7 @@
 import asyncio
 
 from consumer import start_consumer
-from config.settings import settings
+from src.config.settings import settings
 
 DATABASE_URL = settings.DATABASE_URL
 

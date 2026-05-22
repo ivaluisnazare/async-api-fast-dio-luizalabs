@@ -12,7 +12,7 @@ from account.src.exceptions.custom_exceptions import (
 from account.src.schemas.account import (AccountCreate, AccountResponse,
                                          AccountUpdate)
 from account.src.service.account_service import AccountService
-from shared.database import get_db
+from account.src.shared.database import get_db
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 
