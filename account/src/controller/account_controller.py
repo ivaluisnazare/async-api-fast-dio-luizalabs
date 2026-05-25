@@ -1,18 +1,20 @@
+# account_controller.py
 from decimal import Decimal
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from account.src.dependencies.auth_dependency import (get_current_user,
-                                                      get_current_user_id)
-from account.src.exceptions.custom_exceptions import (
+from src.dependencies.auth_dependency import (
+    get_current_user,
+    get_current_user_id)
+from src.exceptions.custom_exceptions import (
     AccountNotFoundException, DuplicateAccountException,
     InsufficientBalanceException, InvalidAmountException)
-from account.src.schemas.account import (AccountCreate, AccountResponse,
+from src.schemas.account import (AccountCreate, AccountResponse,
                                          AccountUpdate)
-from account.src.service.account_service import AccountService
-from account.src.shared.database import get_db
+from src.service.account_service import AccountService
+from src.shared.database import get_db
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 

@@ -1,4 +1,4 @@
-# main_consumer.py (no account-service)
+# main_consumer.py
 import asyncio
 
 from consumer import start_consumer

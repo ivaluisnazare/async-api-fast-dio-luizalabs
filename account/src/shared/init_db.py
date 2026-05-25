@@ -1,7 +1,7 @@
 #init_db.py
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from sqlalchemy import text
-from config.settings import settings
+from src.config.settings import settings
 import backoff
 import logging
 
@@ -10,8 +10,6 @@ logger = logging.getLogger(__name__)
 
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 async def init_db() -> AsyncEngine:
-    engine = None
-    original_error = None
 
     try:
         logger.info(f"Trying to connect with {settings.DATABASE_URL}")

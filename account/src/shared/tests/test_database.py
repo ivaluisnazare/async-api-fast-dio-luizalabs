@@ -2,9 +2,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 import pytest_asyncio
-from config.settings import Settings
-# CORREÇÃO: Importe do módulo correto (shared.database)
-from shared.database import DATABASE_URL, engine, get_db
+from src.config.settings import Settings
+from src.shared.database import DATABASE_URL, engine, get_db
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 

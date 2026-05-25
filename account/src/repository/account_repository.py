@@ -4,10 +4,10 @@ from typing import List
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from account.src.exceptions.custom_exceptions import (
+from src.exceptions.custom_exceptions import (
     AccountNotFoundException, DuplicateAccountException)
-from account.src.models.account import accounts
-from account.src.schemas.account import AccountCreate, AccountUpdate
+from src.models.account import accounts
+from src.schemas.account import AccountCreate, AccountUpdate
 
 
 class AccountRepository:

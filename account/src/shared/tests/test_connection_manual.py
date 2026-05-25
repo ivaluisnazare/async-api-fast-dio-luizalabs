@@ -1,5 +1,5 @@
 import asyncio
-from config.settings import settings
+from src.config.settings import settings
 
 
 async def test_connection():
