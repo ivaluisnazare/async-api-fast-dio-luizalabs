@@ -1,3 +1,4 @@
+# consumer.py
 import asyncio
 import json
 import logging
@@ -6,12 +7,15 @@ from typing import Any, Dict, Optional
 
 import aio_pika
 
+from src.config.settings import settings
+
 logger = logging.getLogger(__name__)
 
-RABBITMQ_URL = "amqp://admin:rabbit123@localhost:5672/"
 ACCOUNT_AUTH_QUEUE = "account_auth_queue"
 TOKEN_EXCHANGE = "auth_tokens_exchange"
 TOKEN_ROUTING_KEY = "auth.token"
+
+RABBITMQ_URL = settings.RABBITMQ_URL
 
 
 class TokenStorage:
@@ -109,7 +113,6 @@ async def consume_token_messages():
             async with connection:
                 channel = await connection.channel()
 
-                # Declara exchange
                 exchange = await channel.declare_exchange(
                     TOKEN_EXCHANGE, aio_pika.ExchangeType.DIRECT, durable=True
                 )

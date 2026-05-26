@@ -32,9 +32,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_all_accounts_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_accounts = [
                 MockAccountResponse(id=1, user_id=1, balance=Decimal("1000.00")),
                 MockAccountResponse(id=2, user_id=2, balance=Decimal("2000.00")),
@@ -54,9 +52,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_all_accounts_with_pagination(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_accounts = [
                 MockAccountResponse(id=3, user_id=3, balance=Decimal("3000.00"))
             ]
@@ -74,9 +70,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_all_accounts_server_error(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_service_instance = AsyncMock()
             mock_service_instance.get_all_accounts.side_effect = Exception(
                 "Database error"
@@ -90,9 +84,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_account_by_id_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
@@ -111,11 +103,8 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_account_by_id_not_found(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
-            from account.src.exceptions.custom_exceptions import \
-                AccountNotFoundException
+        with patch("src.controller.account_controller.AccountService") as mock_service:
+            from src.exceptions.custom_exceptions import AccountNotFoundException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.get_account_by_id.side_effect = (
@@ -129,9 +118,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_account_by_id_forbidden(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_account = MockAccountResponse(
                 id=1, user_id=2, balance=Decimal("1000.00")
             )
@@ -147,9 +134,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_account_by_user_id_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
@@ -166,11 +151,8 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_get_account_by_user_id_not_found(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
-            from account.src.exceptions.custom_exceptions import \
-                AccountNotFoundException
+        with patch("src.controller.account_controller.AccountService") as mock_service:
+            from src.exceptions.custom_exceptions import AccountNotFoundException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.get_account_by_user_id.side_effect = (
@@ -184,9 +166,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_create_account_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_account = MockAccountResponse(id=1, user_id=1, balance=Decimal("0.00"))
 
             mock_service_instance = AsyncMock()
@@ -204,11 +184,8 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_create_account_duplicate(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
-            from account.src.exceptions.custom_exceptions import \
-                DuplicateAccountException
+        with patch("src.controller.account_controller.AccountService") as mock_service:
+            from src.exceptions.custom_exceptions import DuplicateAccountException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.create_account.side_effect = (
@@ -224,9 +201,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_update_account_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
@@ -249,11 +224,8 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_update_account_not_found(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
-            from account.src.exceptions.custom_exceptions import \
-                AccountNotFoundException
+        with patch("src.controller.account_controller.AccountService") as mock_service:
+            from src.exceptions.custom_exceptions import AccountNotFoundException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.get_account_by_id.side_effect = (
@@ -269,9 +241,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_update_account_forbidden(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=2, balance=Decimal("1000.00")
             )
@@ -288,9 +258,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_delete_account_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
@@ -306,11 +274,8 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_delete_account_not_found(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
-            from account.src.exceptions.custom_exceptions import \
-                AccountNotFoundException
+        with patch("src.controller.account_controller.AccountService") as mock_service:
+            from src.exceptions.custom_exceptions import AccountNotFoundException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.get_account_by_id.side_effect = (
@@ -324,9 +289,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_delete_account_forbidden(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=2, balance=Decimal("1000.00")
             )
@@ -341,9 +304,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_deposit_to_account_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
@@ -370,15 +331,12 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_deposit_invalid_amount_service_error(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
 
-            from account.src.exceptions.custom_exceptions import \
-                InvalidAmountException
+            from src.exceptions.custom_exceptions import InvalidAmountException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.get_account_by_id.return_value = mock_existing_account
@@ -398,9 +356,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_withdraw_from_account_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
@@ -421,15 +377,12 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_withdraw_insufficient_balance(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_existing_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("100.00")
             )
 
-            from account.src.exceptions.custom_exceptions import \
-                InsufficientBalanceException
+            from src.exceptions.custom_exceptions import InsufficientBalanceException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.get_account_by_id.return_value = mock_existing_account
@@ -446,9 +399,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_transfer_between_accounts_success(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_from_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("1000.00")
             )
@@ -479,9 +430,7 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_transfer_forbidden(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_from_account = MockAccountResponse(
                 id=1, user_id=2, balance=Decimal("1000.00")
             )
@@ -496,15 +445,12 @@ class TestAccountController:
 
     @pytest.mark.asyncio
     async def test_transfer_insufficient_balance(self, client):
-        with patch(
-            "account.src.controller.account_controller.AccountService"
-        ) as mock_service:
+        with patch("src.controller.account_controller.AccountService") as mock_service:
             mock_from_account = MockAccountResponse(
                 id=1, user_id=1, balance=Decimal("100.00")
             )
 
-            from account.src.exceptions.custom_exceptions import \
-                InsufficientBalanceException
+            from src.exceptions.custom_exceptions import InsufficientBalanceException
 
             mock_service_instance = AsyncMock()
             mock_service_instance.get_account_by_id.return_value = mock_from_account

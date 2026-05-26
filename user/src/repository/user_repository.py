@@ -3,12 +3,14 @@ from typing import List
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from user.src.exceptions.custom_exceptions import (DuplicateUserException,
-                                                   InactiveUserException,
-                                                   InvalidCredentialsException,
-                                                   UserNotFoundException)
-from user.src.models.users import users
-from user.src.schemas.user import UserCreate, UserUpdate
+from src.exceptions.custom_exceptions import (
+    DuplicateUserException,
+    InactiveUserException,
+    InvalidCredentialsException,
+    UserNotFoundException,
+)
+from src.models.users import users
+from src.schemas.users import UserCreate, UserUpdate
 
 
 class UserRepository:
@@ -110,7 +112,7 @@ class UserRepository:
         return result.rowcount > 0
 
     async def authenticate_user(self, username: str, password: str) -> dict:
-        from user.src.security.jwt_handler import verify_password
+        from src.security.jwt_handler import verify_password
 
         try:
             user = await self.get_by_username(username)

@@ -3,8 +3,8 @@ import logging
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from account.src.messaging.consumer import token_storage as storage
-from account.src.security.token_validator import get_token_validator
+from src.messaging.consumer import token_storage as storage
+from src.securities.token_validator import get_token_validator
 
 security = HTTPBearer()
 logger = logging.getLogger(__name__)

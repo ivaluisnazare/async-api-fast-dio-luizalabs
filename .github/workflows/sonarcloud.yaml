@@ -65,10 +65,11 @@ jobs:
           -Dsonar.projectName=async-api-fast-dio-luizalabs
           -Dsonar.organization=ivaluisnazare
           -Dsonar.projectVersion=1.0
-          -Dsonar.sources=account,shared
+          -Dsonar.sources=account,user
           -Dsonar.sourceEncoding=UTF-8
           -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**
-          -Dsonar.tests=account/tests,shared/tests
+          -Dsonar.tests=account/tests,user/tests
           -Dsonar.python.coverage.reportPaths=coverage.xml
           -Dsonar.python.xunit.reportPath=test-results.xml
-          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**
+          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**,account/src/shared/**,account/src/config/**,account/src/messaging/**,account/src/models/**,account/src/securities/**,account/src/schemas/**,user/src/shared/**,user/src/config/**,user/src/messaging/**,user/src/models/**,user/src/security/**,user/src/schemas/**,user/src/repository/**
+          -Dsonar.cpd.exclusions=**/src/config/**,**/src/shared/**

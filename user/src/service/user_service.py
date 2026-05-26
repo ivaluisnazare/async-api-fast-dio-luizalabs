@@ -2,9 +2,9 @@ from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from user.src.repository.user_repository import UserRepository
-from user.src.schemas.user import UserCreate, UserResponse, UserUpdate
-from user.src.security.jwt_handler import get_password_hash
+from src.repository.user_repository import UserRepository
+from src.schemas.users import UserCreate, UserResponse, UserUpdate
+from src.security.jwt_handler import get_password_hash
 
 
 class UserService:
