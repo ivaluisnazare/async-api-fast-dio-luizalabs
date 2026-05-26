@@ -6,9 +6,12 @@ from typing import Any, Dict
 
 import aio_pika
 
+from src.config.settings import settings
+
 logger = logging.getLogger(__name__)
 
-RABBITMQ_URL = "amqp://admin:rabbit123@localhost:5672/"
+
+RABBITMQ_URL = settings.RABBITMQ_URL
 LOGIN_QUEUE = "user_login_queue"
 TOKEN_EXCHANGE = "auth_tokens_exchange"
 TOKEN_ROUTING_KEY = "auth.token"

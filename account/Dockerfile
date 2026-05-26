@@ -3,11 +3,11 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV APP_HOME=/app
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app:/app/src
 
 WORKDIR $APP_HOME
 
-COPY account/requirements.txt .
+COPY requirements.txt .
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
@@ -25,4 +25,4 @@ USER appuser
 
 EXPOSE 8000
 
-CMD ["uvicorn", "account.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

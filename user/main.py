@@ -3,9 +3,9 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
-from config.settings import settings
-from shared.init_db import close_db, init_db
-from user.src.controller.user_controller import router as user_router
+from src.config.settings import settings
+from src.shared.init_db import close_db, init_db
+from src.controller.user_controller import router as user_router
 
 
 @asynccontextmanager
@@ -41,5 +41,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8081,
         reload=settings.is_development,
-        log_level="info" if settings.is_production else "debug",
+        log_level="info" if settings.is_development else "debug",
     )

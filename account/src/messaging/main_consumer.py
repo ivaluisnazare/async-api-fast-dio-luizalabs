@@ -1,8 +1,9 @@
-# main_consumer.py (no account-service)
+# main_consumer.py
 import asyncio
 
 from consumer import start_consumer
-from config.settings import settings
+
+from src.config.settings import settings
 
 DATABASE_URL = settings.DATABASE_URL
 

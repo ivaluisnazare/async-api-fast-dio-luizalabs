@@ -9,12 +9,14 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from user.main import app
-from user.src.repository.user_repository import UserRepository
-from user.src.schemas.user import UserCreate, UserResponse, UserUpdate
-from user.src.service.user_service import UserService
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+from main import app
+from src.repository.user_repository import UserRepository
+from src.schemas.users import UserCreate, UserResponse, UserUpdate
+from src.service.user_service import UserService
+
+
 
 
 @pytest_asyncio.fixture(scope="session")

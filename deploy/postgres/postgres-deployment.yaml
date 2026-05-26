@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: postgres-service
   namespace: banking-operations
   labels:
-    app: postgres
+    app: postgres-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: postgres-service
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres-service
     spec:
       automountServiceAccountToken: false
       initContainers:
@@ -28,6 +28,9 @@ spec:
         image: postgres:13
         ports:
         - containerPort: 5432
+          name: postgres
+        - containerPort: 9187
+          name: pg-exporter
         env:
         - name: POSTGRES_DB
           valueFrom:
@@ -61,4 +64,4 @@ spec:
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
-          claimName: postgres-pvc
+          claimName: postgres-pv-claim

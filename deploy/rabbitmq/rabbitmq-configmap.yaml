@@ -4,5 +4,5 @@ metadata:
   name: rabbitmq-config
   namespace: banking-operations
 data:
-  RABBITMQ_DEFAULT_USER: "admin"
-  RABBITMQ_DEFAULT_PASS: "rabbit123"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_USER: "admin"
