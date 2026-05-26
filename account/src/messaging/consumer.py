@@ -4,9 +4,10 @@ import json
 import logging
 from datetime import datetime
 from typing import Any, Dict, Optional
-from src.config.settings import settings
 
 import aio_pika
+
+from src.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ TOKEN_EXCHANGE = "auth_tokens_exchange"
 TOKEN_ROUTING_KEY = "auth.token"
 
 RABBITMQ_URL = settings.RABBITMQ_URL
+
 
 class TokenStorage:
 

@@ -1,9 +1,11 @@
-#init_db.py
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
-from sqlalchemy import text
-from src.config.settings import settings
-import backoff
+# init_db.py
 import logging
+
+import backoff
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+
+from src.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +19,7 @@ async def init_db() -> AsyncEngine:
             settings.DATABASE_URL,
             echo=settings.is_development,
             pool_pre_ping=True,
-            pool_recycle=3600
+            pool_recycle=3600,
         )
 
         async with engine.begin() as conn:
@@ -36,9 +38,7 @@ async def init_db() -> AsyncEngine:
 
             try:
                 engine = create_async_engine(
-                    fallback_url,
-                    echo=settings.is_development,
-                    pool_pre_ping=True
+                    fallback_url, echo=settings.is_development, pool_pre_ping=True
                 )
                 async with engine.begin() as conn:
                     await conn.execute(text("SELECT 1"))
@@ -49,7 +49,8 @@ async def init_db() -> AsyncEngine:
                 logger.error(f"Fallback also failed: {fallback_error}")
 
         raise ConnectionError(
-            f"Failed to connect to database after fallback attempts: {original_error}") from original_error
+            f"Failed to connect to database after fallback attempts: {original_error}"
+        ) from original_error
 
 
 async def close_db(engine: AsyncEngine | None):

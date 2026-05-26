@@ -3,9 +3,11 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from fastapi import status
 
-from src.exceptions.custom_exceptions import (DuplicateUserException,
-                                                   InvalidCredentialsException,
-                                                   UserNotFoundException)
+from src.exceptions.custom_exceptions import (
+    DuplicateUserException,
+    InvalidCredentialsException,
+    UserNotFoundException,
+)
 from src.schemas.users import Token, UserCreate, UserResponse
 
 

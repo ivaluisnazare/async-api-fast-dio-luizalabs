@@ -3,14 +3,15 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.shared.database import get_db
-from src.exceptions.custom_exceptions import (DuplicateUserException,
-                                                   InvalidCredentialsException,
-                                                   UserNotFoundException)
-from src.schemas.users import (Token, UserCreate, UserLogin, UserResponse,
-                               UserUpdate)
+from src.exceptions.custom_exceptions import (
+    DuplicateUserException,
+    InvalidCredentialsException,
+    UserNotFoundException,
+)
+from src.schemas.users import Token, UserCreate, UserLogin, UserResponse, UserUpdate
 from src.service.auth_service import AuthService
 from src.service.user_service import UserService
+from src.shared.database import get_db
 
 router = APIRouter(prefix="/users", tags=["users"])
 

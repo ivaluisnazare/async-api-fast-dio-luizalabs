@@ -1,22 +1,18 @@
-#settings.py
+# settings.py
+from typing import Literal
 from urllib.parse import quote_plus
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, model_validator
-from typing import Literal
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore",
-        case_sensitive=False
+        env_file=".env", env_file_encoding="utf-8", extra="ignore", case_sensitive=False
     )
 
     JWT_SECRET_KEY: str = Field(default="")
     JWT_ALGORITHM: str = "HS256"
-
 
     RABBITMQ_HOST: str = Field(default="localhost")
     RABBITMQ_PORT: str = Field(default="5672")

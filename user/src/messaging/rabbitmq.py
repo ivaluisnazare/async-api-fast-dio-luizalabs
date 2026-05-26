@@ -3,9 +3,10 @@ import json
 import logging
 from contextlib import asynccontextmanager
 from typing import Any, Dict
-from src.config.settings import settings
 
 import aio_pika
+
+from src.config.settings import settings
 
 logger = logging.getLogger(__name__)
 

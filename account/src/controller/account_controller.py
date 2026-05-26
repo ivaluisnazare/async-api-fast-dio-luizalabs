@@ -5,14 +5,14 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.dependencies.auth_dependency import (
-    get_current_user,
-    get_current_user_id)
+from src.dependencies.auth_dependency import get_current_user, get_current_user_id
 from src.exceptions.custom_exceptions import (
-    AccountNotFoundException, DuplicateAccountException,
-    InsufficientBalanceException, InvalidAmountException)
-from src.schemas.account import (AccountCreate, AccountResponse,
-                                         AccountUpdate)
+    AccountNotFoundException,
+    DuplicateAccountException,
+    InsufficientBalanceException,
+    InvalidAmountException,
+)
+from src.schemas.account import AccountCreate, AccountResponse, AccountUpdate
 from src.service.account_service import AccountService
 from src.shared.database import get_db
 

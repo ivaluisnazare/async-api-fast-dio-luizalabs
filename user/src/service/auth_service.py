@@ -5,8 +5,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions.custom_exceptions import InvalidCredentialsException
-from src.messaging.rabbitmq import (send_login_message,
-                                         send_token_to_account_service)
+from src.messaging.rabbitmq import send_login_message, send_token_to_account_service
 from src.repository.user_repository import UserRepository
 from src.schemas.users import Token, UserLogin
 from src.security.jwt_handler import create_access_token

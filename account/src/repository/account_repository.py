@@ -5,7 +5,9 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions.custom_exceptions import (
-    AccountNotFoundException, DuplicateAccountException)
+    AccountNotFoundException,
+    DuplicateAccountException,
+)
 from src.models.account import accounts
 from src.schemas.account import AccountCreate, AccountUpdate
 

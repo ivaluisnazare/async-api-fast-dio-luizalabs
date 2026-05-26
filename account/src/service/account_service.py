@@ -4,11 +4,12 @@ from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions.custom_exceptions import (
-    AccountNotFoundException, InsufficientBalanceException,
-    InvalidAmountException)
+    AccountNotFoundException,
+    InsufficientBalanceException,
+    InvalidAmountException,
+)
 from src.repository.account_repository import AccountRepository
-from src.schemas.account import (AccountCreate, AccountResponse,
-                                         AccountUpdate)
+from src.schemas.account import AccountCreate, AccountResponse, AccountUpdate
 
 
 class AccountService:

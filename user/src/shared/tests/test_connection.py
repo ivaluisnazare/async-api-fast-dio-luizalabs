@@ -1,9 +1,11 @@
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine
+
 from src.config.settings import settings
-from src.shared.init_db import init_db, close_db
+from src.shared.init_db import close_db, init_db
 
 
 class TestDatabaseConnection:
@@ -28,7 +30,7 @@ class TestDatabaseConnection:
     @pytest.mark.asyncio
     async def test_init_db_successful_connection(self, mock_engine):
 
-        with patch('src.shared.init_db.create_async_engine') as mock_create_engine:
+        with patch("src.shared.init_db.create_async_engine") as mock_create_engine:
             mock_create_engine.return_value = mock_engine
 
             result_engine = await init_db()
@@ -37,7 +39,7 @@ class TestDatabaseConnection:
                 settings.DATABASE_URL,
                 echo=settings.is_development,
                 pool_pre_ping=True,
-                pool_recycle=3600
+                pool_recycle=3600,
             )
 
             assert result_engine == mock_engine
@@ -45,10 +47,10 @@ class TestDatabaseConnection:
     @pytest.mark.asyncio
     async def test_init_db_fallback_connection(self, mock_engine):
 
-        with patch('src.shared.init_db.create_async_engine') as mock_create_engine:
+        with patch("src.shared.init_db.create_async_engine") as mock_create_engine:
             mock_create_engine.side_effect = [
                 Exception("Connection failed"),
-                mock_engine
+                mock_engine,
             ]
 
             result_engine = await init_db()
@@ -62,14 +64,16 @@ class TestDatabaseConnection:
             second_call_args = mock_create_engine.call_args_list[1]
             fallback_url = settings.DATABASE_URL.replace("localhost", "127.0.0.1")
             assert fallback_url in str(second_call_args)
-            assert "pool_recycle=3600" in str(second_call_args) or "pool_pre_ping=True" in str(second_call_args)
+            assert "pool_recycle=3600" in str(
+                second_call_args
+            ) or "pool_pre_ping=True" in str(second_call_args)
 
             assert result_engine == mock_engine
 
     @pytest.mark.asyncio
     async def test_init_db_all_connections_fail(self):
 
-        with patch('src.shared.init_db.create_async_engine') as mock_create_engine:
+        with patch("src.shared.init_db.create_async_engine") as mock_create_engine:
             mock_create_engine.side_effect = Exception("All connections failed")
 
             with pytest.raises(Exception, match="All connections failed"):
@@ -78,7 +82,9 @@ class TestDatabaseConnection:
     @pytest.mark.asyncio
     async def test_close_db_success(self, mock_engine):
 
-        with patch.object(mock_engine, 'dispose', new_callable=AsyncMock) as mock_dispose:
+        with patch.object(
+            mock_engine, "dispose", new_callable=AsyncMock
+        ) as mock_dispose:
             await close_db(mock_engine)
 
             mock_dispose.assert_called_once()
@@ -134,7 +140,7 @@ class TestDatabaseIntegration:
     @pytest.mark.asyncio
     async def test_database_operations(self, mock_engine):
 
-        with patch('src.shared.init_db.create_async_engine') as mock_create_engine:
+        with patch("src.shared.init_db.create_async_engine") as mock_create_engine:
             mock_create_engine.return_value = mock_engine
 
             mock_conn = AsyncMock()
@@ -172,13 +178,17 @@ class TestDatabaseIntegration:
     async def test_database_integration_real(self):
 
         if settings.ENVIRONMENT not in ["development", "test"]:
-            pytest.skip("Integration tests only run in development/testing environments.")
+            pytest.skip(
+                "Integration tests only run in development/testing environments."
+            )
 
         try:
             engine = await init_db()
             await close_db(engine)
         except Exception:
-            pytest.skip("PostgreSQL is not available for real-world integration testing.")
+            pytest.skip(
+                "PostgreSQL is not available for real-world integration testing."
+            )
 
 
 if __name__ == "__main__":

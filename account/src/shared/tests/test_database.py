@@ -2,9 +2,10 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 import pytest_asyncio
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+
 from src.config.settings import Settings
 from src.shared.database import DATABASE_URL, engine, get_db
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 
 class TestDatabase:
@@ -80,7 +81,9 @@ class TestDatabaseSettings:
     @patch("shared.database.settings")
     def test_development_environment_echo_true(self, mock_settings):
         mock_settings.is_development = True
-        mock_settings.DATABASE_URL = "postgresql+asyncpg://test:test@localhost:5432/test"
+        mock_settings.DATABASE_URL = (
+            "postgresql+asyncpg://test:test@localhost:5432/test"
+        )
 
         test_engine = create_async_engine(
             mock_settings.DATABASE_URL.replace(
@@ -115,8 +118,13 @@ class TestDatabaseSettings:
 class TestDatabaseIntegration:
 
     def test_all_components_initialized(self):
-        from shared.database import (DATABASE_URL, AsyncSessionLocal, engine,
-                                     get_db, metadata)
+        from shared.database import (
+            DATABASE_URL,
+            AsyncSessionLocal,
+            engine,
+            get_db,
+            metadata,
+        )
 
         components = [DATABASE_URL, engine, AsyncSessionLocal, metadata, get_db]
 

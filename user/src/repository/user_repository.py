@@ -3,10 +3,12 @@ from typing import List
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.exceptions.custom_exceptions import (DuplicateUserException,
-                                                   InactiveUserException,
-                                                   InvalidCredentialsException,
-                                                   UserNotFoundException)
+from src.exceptions.custom_exceptions import (
+    DuplicateUserException,
+    InactiveUserException,
+    InvalidCredentialsException,
+    UserNotFoundException,
+)
 from src.models.users import users
 from src.schemas.users import UserCreate, UserUpdate
 
