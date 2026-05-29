@@ -3,10 +3,10 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from user.src.exceptions.custom_exceptions import (DuplicateUserException,
+from src.exceptions.custom_exceptions import (DuplicateUserException,
                                                    UserNotFoundException)
-from user.src.schemas.user import UserCreate, UserResponse, UserUpdate
-from user.src.service.user_service import UserService
+from src.schemas.users import UserCreate, UserResponse, UserUpdate
+from src.service.user_service import UserService
 
 
 @pytest.mark.asyncio
@@ -53,7 +53,7 @@ class TestUserService:
         mock_repository.get_all = AsyncMock(return_value=[mock_user_data])
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -71,7 +71,7 @@ class TestUserService:
         mock_repository.get_all = AsyncMock(return_value=[])
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -86,7 +86,7 @@ class TestUserService:
         mock_repository.get_by_id = AsyncMock(return_value=mock_user_data)
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -104,7 +104,7 @@ class TestUserService:
         )
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -118,7 +118,7 @@ class TestUserService:
         mock_repository.get_by_username = AsyncMock(return_value=mock_user_data)
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -135,7 +135,7 @@ class TestUserService:
         )
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -149,14 +149,14 @@ class TestUserService:
     ):
         # Mock
         with patch(
-            "user.src.service.user_service.get_password_hash",
+            "src.service.user_service.get_password_hash",
             return_value="hashed_password",
         ):
             mock_repository = AsyncMock()
             mock_repository.create = AsyncMock(return_value=mock_user_data)
 
             with patch(
-                "user.src.service.user_service.UserRepository",
+                "src.service.user_service.UserRepository",
                 return_value=mock_repository,
             ):
                 service = UserService(mock_db_session)
@@ -175,7 +175,7 @@ class TestUserService:
         self, mock_db_session, user_create_data
     ):
         with patch(
-            "user.src.service.user_service.get_password_hash",
+            "src.service.user_service.get_password_hash",
             return_value="hashed_password",
         ):
             mock_repository = AsyncMock()
@@ -184,7 +184,7 @@ class TestUserService:
             )
 
             with patch(
-                "user.src.service.user_service.UserRepository",
+                "src.service.user_service.UserRepository",
                 return_value=mock_repository,
             ):
                 service = UserService(mock_db_session)
@@ -199,14 +199,14 @@ class TestUserService:
         self, mock_db_session, user_create_data
     ):
         with patch(
-            "user.src.service.user_service.get_password_hash",
+            "src.service.user_service.get_password_hash",
             return_value="hashed_password",
         ):
             mock_repository = AsyncMock()
             mock_repository.create = AsyncMock(side_effect=Exception("Database error"))
 
             with patch(
-                "user.src.service.user_service.UserRepository",
+                "src.service.user_service.UserRepository",
                 return_value=mock_repository,
             ):
                 service = UserService(mock_db_session)
@@ -225,7 +225,7 @@ class TestUserService:
         mock_repository.update = AsyncMock(return_value=updated_data)
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -243,7 +243,7 @@ class TestUserService:
         )
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -259,7 +259,7 @@ class TestUserService:
         mock_repository.update = AsyncMock(return_value=mock_user_data)
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -273,7 +273,7 @@ class TestUserService:
         mock_repository.delete = AsyncMock(return_value=True)
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -290,7 +290,7 @@ class TestUserService:
         )
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -305,7 +305,7 @@ class TestUserService:
         mock_repository.delete = AsyncMock(return_value=False)
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -319,7 +319,7 @@ class TestUserService:
         mock_repository.delete = AsyncMock(side_effect=Exception("Database error"))
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 
@@ -351,7 +351,7 @@ class TestUserService:
         mock_repository.get_all = AsyncMock(return_value=[])
 
         with patch(
-            "user.src.service.user_service.UserRepository", return_value=mock_repository
+            "src.service.user_service.UserRepository", return_value=mock_repository
         ):
             service = UserService(mock_db_session)
 

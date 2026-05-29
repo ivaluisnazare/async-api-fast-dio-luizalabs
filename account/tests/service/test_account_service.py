@@ -4,12 +4,14 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from account.src.exceptions.custom_exceptions import (
-    AccountNotFoundException, DuplicateAccountException,
-    InsufficientBalanceException, InvalidAmountException)
-from account.src.schemas.account import (AccountCreate, AccountResponse,
-                                         AccountUpdate)
-from account.src.service.account_service import AccountService
+from src.exceptions.custom_exceptions import (
+    AccountNotFoundException,
+    DuplicateAccountException,
+    InsufficientBalanceException,
+    InvalidAmountException,
+)
+from src.schemas.account import AccountCreate, AccountResponse, AccountUpdate
+from src.service.account_service import AccountService
 
 
 class TestAccountService:

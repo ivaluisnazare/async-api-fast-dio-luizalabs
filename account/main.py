@@ -5,11 +5,11 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
-from account.src.controller.account_controller import router as account_router
-from account.src.messaging.consumer import start_rabbitmq_consumer
-from account.src.security.token_validator import initialize_token_validator
-from config.settings import settings
-from shared.init_db import close_db, init_db
+from src.controller.account_controller import router as account_router
+from src.messaging.consumer import start_rabbitmq_consumer
+from src.securities.token_validator import initialize_token_validator
+from src.config.settings import settings
+from src.shared.init_db import close_db, init_db
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,11 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+
+@app.get("/ready")
+async def ready():
+    return {"status": "ready"}
 
 
 def run_server():

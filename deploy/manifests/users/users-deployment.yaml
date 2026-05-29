@@ -1,0 +1,107 @@
+# users-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-service
+  namespace: banking-operations
+  labels:
+    app: users-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-service
+  template:
+    metadata:
+      labels:
+        app: users-service
+    spec:
+      containers:
+      - name: users-service
+        image: ivanazare/user-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+          name: http
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: DB_NAME
+        - name: JWT_ALGORITHM
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: JWT_ALGORITHM
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: ENVIRONMENT
+        - name: DOCKER_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: DOCKER_MODE
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: RABBITMQ_HOST
+        - name: RABBITMQ_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: RABBITMQ_PORT
+        - name: RABBITMQ_USER
+          valueFrom:
+            configMapKeyRef:
+              name: users-config
+              key: RABBITMQ_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: users-secrets
+              key: DB_PASSWORD
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: users-secrets
+              key: JWT_SECRET_KEY
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: users-secrets
+              key: RABBITMQ_PASSWORD
+        - name: DB_USER
+          value: "banking_operations"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 5

@@ -1,0 +1,18 @@
+# account-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: account-config
+  namespace: banking-operations
+  labels:
+    app: account-service
+data:
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "bank_db"
+  JWT_ALGORITHM: "HS256"
+  ENVIRONMENT: "production"
+  DOCKER_MODE: "true"
+  RABBITMQ_HOST: "rabbitmq-service"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_USER: "admin"

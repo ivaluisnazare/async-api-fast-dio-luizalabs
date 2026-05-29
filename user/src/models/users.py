@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy.sql import func
 
-from shared.database import metadata
+from src.shared.database import metadata
 
 users = sa.Table(
     "users",
