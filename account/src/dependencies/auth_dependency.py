@@ -1,7 +1,11 @@
 import logging
+import os
+import sys
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from src.messaging.consumer import token_storage as storage
 from src.securities.token_validator import get_token_validator

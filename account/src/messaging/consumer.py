@@ -88,9 +88,9 @@ async def process_token_message(message: aio_pika.IncomingMessage):
                     )
                     return
 
-                token_storage.store_token(token_data)
+            token_storage.store_token(token_data)
 
-                logger.info(
+            logger.info(
                     f"Token processed successfully for user: {token_data['username']}"
                 )
 
