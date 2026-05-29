@@ -1,3 +1,4 @@
+# token_validator.py
 import logging
 from datetime import UTC, datetime
 from typing import Any, Dict, Optional
@@ -52,6 +53,8 @@ class TokenValidator:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Invalid token: {str(e)}",
             )
+        except HTTPException:
+            raise
         except Exception as e:
             logger.error(f"Token validation error: {str(e)}")
             raise HTTPException(

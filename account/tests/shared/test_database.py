@@ -35,7 +35,7 @@ class TestGetDB:
     async def test_get_db_returns_async_session(self):
         mock_session = AsyncMock(spec=AsyncSession)
 
-        with patch("shared.database.AsyncSessionLocal") as mock_session_local:
+        with patch("src.shared.database.AsyncSessionLocal") as mock_session_local:
             mock_session_local.return_value.__aenter__.return_value = mock_session
 
             db_gen = get_db()
@@ -49,7 +49,7 @@ class TestGetDB:
     async def test_get_db_closes_session_on_exit(self):
         mock_session = AsyncMock(spec=AsyncSession)
 
-        with patch("shared.database.AsyncSessionLocal") as mock_session_local:
+        with patch("src.shared.database.AsyncSessionLocal") as mock_session_local:
             mock_session_local.return_value.__aenter__.return_value = mock_session
 
             async for session in get_db():
@@ -61,7 +61,7 @@ class TestGetDB:
     async def test_get_db_proper_context_management(self):
         mock_session = AsyncMock(spec=AsyncSession)
 
-        with patch("shared.database.AsyncSessionLocal") as mock_session_local:
+        with patch("src.shared.database.AsyncSessionLocal") as mock_session_local:
             mock_session_local.return_value.__aenter__.return_value = mock_session
 
             async with mock_session_local() as session:
@@ -78,7 +78,7 @@ class TestDatabaseSettings:
 
         assert settings.DATABASE_URL.startswith("postgresql+asyncpg://")
 
-    @patch("shared.database.settings")
+    @patch("src.shared.database.settings")
     def test_development_environment_echo_true(self, mock_settings):
         mock_settings.is_development = True
         mock_settings.DATABASE_URL = (
@@ -97,7 +97,7 @@ class TestDatabaseSettings:
 
         assert test_engine.echo is True
 
-    @patch("shared.database.settings")
+    @patch("src.shared.database.settings")
     def test_production_environment_echo_false(self, mock_settings):
         mock_settings.is_development = False
         mock_settings.DATABASE_URL = "postgresql://test:test@localhost:5432/test"
@@ -118,7 +118,7 @@ class TestDatabaseSettings:
 class TestDatabaseIntegration:
 
     def test_all_components_initialized(self):
-        from shared.database import (
+        from src.shared.database import (
             DATABASE_URL,
             AsyncSessionLocal,
             engine,
@@ -139,7 +139,7 @@ class TestDatabaseIntegration:
 
 @pytest.fixture
 def mock_settings():
-    with patch("shared.database.settings") as mock:
+    with patch("src.shared.database.settings") as mock:
         mock.DATABASE_URL = "postgresql://test:test@localhost:5432/testdb"
         mock.is_development = True
         yield mock
