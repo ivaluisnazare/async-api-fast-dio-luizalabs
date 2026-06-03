@@ -10,6 +10,7 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 from main import app
 from src.repository.user_repository import UserRepository
