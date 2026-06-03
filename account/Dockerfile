@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++=4:12.2.0-3 \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir --only-binary :all: pip==24.0 \
-    && pip install --no-cache-dir --only-binary :all: -r requirements.txt
+    && pip install --no-cache-dir --only-binary :all: --no-deps -r requirements.txt \
+    || pip install --no-cache-dir --only-binary :all: -r requirements.txt
 
 COPY . .
 
