@@ -25,7 +25,7 @@ AsyncSessionLocal = async_sessionmaker(
 metadata = MetaData()
 
 
-async def get_db() -> AsyncSession:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         try:
             yield session
