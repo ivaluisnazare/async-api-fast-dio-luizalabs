@@ -14,7 +14,7 @@ class TokenValidator:
         self.secret_key = secret_key
         self.algorithm = algorithm
 
-    async def validate_token(self, token: str) -> Dict[str, Any]:
+    def validate_token(self, token: str) -> Dict[str, Any]:
 
         try:
             if token.startswith("Bearer "):
@@ -48,7 +48,7 @@ class TokenValidator:
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
             )
         except jwt.InvalidTokenError as e:
-            logger.error(f"Invalid token: {str(e)}")
+            logger.exception(f"Invalid token: {str(e)}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Invalid token: {str(e)}",
@@ -56,7 +56,7 @@ class TokenValidator:
         except HTTPException:
             raise
         except Exception as e:
-            logger.error(f"Token validation error: {str(e)}")
+            logger.exception(f"Token validation error: {str(e)}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Token validation failed: {str(e)}",
@@ -72,7 +72,7 @@ def get_token_validator() -> TokenValidator:
     return token_validator
 
 
-async def initialize_token_validator(secret_key: str):
+def initialize_token_validator(secret_key: str):
     global token_validator
     token_validator = TokenValidator(secret_key)
     logger.info("TokenValidator initialized")
