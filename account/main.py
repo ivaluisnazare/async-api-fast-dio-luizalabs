@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     await init_db()
-    await initialize_token_validator(settings.JWT_SECRET_KEY)
+    initialize_token_validator(settings.JWT_SECRET_KEY)
     asyncio.create_task(start_rabbitmq_consumer())
     logger.info("RabbitMQ consumer started")
     yield

@@ -38,10 +38,9 @@ class Settings(BaseSettings):
             return self
 
         print(f"Using DB host: {self.DB_HOST}")
-
-        self.DATABASE_URL = f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        print(f"DATABASE_URL: {self.DATABASE_URL}")
         escaped_password = quote_plus(self.DB_PASSWORD)
+        self.DATABASE_URL = f"postgresql+asyncpg://{self.DB_USER}:{escaped_password}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        print(f"DATABASE_URL: {self.DATABASE_URL}")
 
         return self
 

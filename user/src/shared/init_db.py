@@ -48,7 +48,7 @@ async def init_db() -> AsyncEngine:
                 logger.info("Fallback connection successfully established!")
                 return engine
             except Exception as fallback_error:
-                logger.error(f"Fallback also failed: {fallback_error}")
+                logger.exception(f"Fallback also failed: {fallback_error}")
 
         raise ConnectionError(
             f"Failed to connect to database after fallback attempts: {original_error}"
