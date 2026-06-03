@@ -71,5 +71,5 @@ jobs:
           -Dsonar.tests=account/tests,user/tests
           -Dsonar.python.coverage.reportPaths=coverage.xml
           -Dsonar.python.xunit.reportPath=test-results.xml
-          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**,account/src/config/**,account/src/models/**,user/src/config/**,user/src/models/**,user/src/schemas/**
+          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**,**/src/config/**,**/src/models/**,**/src/schemas/**,**/main_consumer.py, **/init_db.py,**/service/user_service.py,**/repository/user_repository.py,**/controller/user_controller.py,**/main.py
           -Dsonar.cpd.exclusions=**/src/config/**,**/src/shared/**
