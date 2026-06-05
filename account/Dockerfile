@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && pip install --no-cache-dir --only-binary :all: --require-hashes pip==24.0 \
     && pip install --no-cache-dir --only-binary :all: --require-hashes -r requirements.txt
 
-COPY . .
+COPY main.py .
+COPY src/ ./src/
 
 RUN groupadd -r appuser && useradd -r -g appuser appuser \
     && chown -R appuser:appuser "$APP_HOME"
