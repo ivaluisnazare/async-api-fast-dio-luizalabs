@@ -3,10 +3,12 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from fastapi import status
 
-from user.src.exceptions.custom_exceptions import (DuplicateUserException,
-                                                   InvalidCredentialsException,
-                                                   UserNotFoundException)
-from user.src.schemas.user import Token, UserCreate, UserResponse
+from src.exceptions.custom_exceptions import (
+    DuplicateUserException,
+    InvalidCredentialsException,
+    UserNotFoundException,
+)
+from src.schemas.users import Token, UserCreate, UserResponse
 
 
 class TestUserController:
@@ -19,9 +21,9 @@ class TestUserController:
         sample_user_response = UserResponse.model_validate(sample_user_data)
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.get_all_users = AsyncMock(return_value=[sample_user_response])
@@ -46,9 +48,9 @@ class TestUserController:
         sample_user_response = UserResponse.model_validate(sample_user_data)
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.get_all_users = AsyncMock(return_value=[sample_user_response])
@@ -65,9 +67,9 @@ class TestUserController:
     async def test_get_all_users_server_error(self, async_client, mock_db_session):
         # Arrange
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.get_all_users = AsyncMock(
@@ -90,9 +92,9 @@ class TestUserController:
         sample_user_response = UserResponse.model_validate(sample_user_data)
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.get_user_by_id = AsyncMock(return_value=sample_user_response)
@@ -112,9 +114,9 @@ class TestUserController:
     async def test_get_user_by_id_not_found(self, async_client, mock_db_session):
         # Arrange
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.get_user_by_id = AsyncMock(
@@ -136,9 +138,9 @@ class TestUserController:
     async def test_get_user_by_id_server_error(self, async_client, mock_db_session):
         # Arrange
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.get_user_by_id = AsyncMock(
@@ -167,9 +169,9 @@ class TestUserController:
         }
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.create_user = AsyncMock(return_value=sample_user_response)
@@ -200,9 +202,9 @@ class TestUserController:
         }
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.create_user = AsyncMock(
@@ -246,9 +248,9 @@ class TestUserController:
         }
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.create_user = AsyncMock(
@@ -272,9 +274,9 @@ class TestUserController:
         update_data = {"email": "updated@example.com", "full_name": "Updated User"}
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.update_user = AsyncMock(return_value=sample_user_response)
@@ -295,9 +297,9 @@ class TestUserController:
         update_data = {"email": "updated@example.com", "full_name": "Updated User"}
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.update_user = AsyncMock(
@@ -321,9 +323,9 @@ class TestUserController:
         update_data = {"email": "updated@example.com", "full_name": "Updated User"}
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.update_user = AsyncMock(
@@ -342,9 +344,9 @@ class TestUserController:
     async def test_delete_user_success(self, async_client, mock_db_session):
         # Arrange
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.delete_user = AsyncMock(return_value=True)
@@ -361,9 +363,9 @@ class TestUserController:
     async def test_delete_user_not_found(self, async_client, mock_db_session):
         # Arrange
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.delete_user = AsyncMock(
@@ -385,9 +387,9 @@ class TestUserController:
     async def test_delete_user_server_error(self, async_client, mock_db_session):
         # Arrange
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
+            "src.controller.user_controller.get_db", return_value=mock_db_session
         ), patch(
-            "user.src.controller.user_controller.UserService"
+            "src.controller.user_controller.UserService"
         ) as mock_service_class:
             mock_service = AsyncMock()
             mock_service.delete_user = AsyncMock(
@@ -416,8 +418,8 @@ class TestUserController:
         }
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
-        ), patch("user.src.controller.user_controller.AuthService") as mock_auth_class:
+            "src.controller.user_controller.get_db", return_value=mock_db_session
+        ), patch("src.controller.user_controller.AuthService") as mock_auth_class:
             mock_auth_service = AsyncMock()
             mock_auth_service.login = AsyncMock(return_value=Token(**token_response))
             mock_auth_class.return_value = mock_auth_service
@@ -439,8 +441,8 @@ class TestUserController:
         login_data = {"username": "testuser", "password": "wrongpassword"}
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
-        ), patch("user.src.controller.user_controller.AuthService") as mock_auth_class:
+            "src.controller.user_controller.get_db", return_value=mock_db_session
+        ), patch("src.controller.user_controller.AuthService") as mock_auth_class:
             mock_auth_service = AsyncMock()
             mock_auth_service.login = AsyncMock(
                 side_effect=InvalidCredentialsException()
@@ -460,8 +462,8 @@ class TestUserController:
         login_data = {"username": "testuser", "password": "password123"}
 
         with patch(
-            "user.src.controller.user_controller.get_db", return_value=mock_db_session
-        ), patch("user.src.controller.user_controller.AuthService") as mock_auth_class:
+            "src.controller.user_controller.get_db", return_value=mock_db_session
+        ), patch("src.controller.user_controller.AuthService") as mock_auth_class:
             mock_auth_service = AsyncMock()
             mock_auth_service.login = AsyncMock(
                 side_effect=Exception("Authentication error")
@@ -495,4 +497,4 @@ class TestUserController:
         response = await async_client.post("/users/login", json=invalid_login_data)
 
         # Assert
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

@@ -4,9 +4,13 @@ from decimal import Decimal
 import pytest
 from pydantic import ValidationError
 
-from account.src.schemas.account import (AccountBalanceResponse, AccountBase,
-                                         AccountCreate, AccountResponse,
-                                         AccountUpdate)
+from account.src.schemas.account import (
+    AccountBalanceResponse,
+    AccountBase,
+    AccountCreate,
+    AccountResponse,
+    AccountUpdate,
+)
 
 
 class TestAccountBase:

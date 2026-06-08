@@ -4,10 +4,12 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from account.src.exceptions.custom_exceptions import (
-    AccountNotFoundException, DuplicateAccountException)
-from account.src.repository.account_repository import AccountRepository
-from account.src.schemas.account import AccountCreate, AccountUpdate
+from src.exceptions.custom_exceptions import (
+    AccountNotFoundException,
+    DuplicateAccountException,
+)
+from src.repository.account_repository import AccountRepository
+from src.schemas.account import AccountCreate, AccountUpdate
 
 
 @pytest.fixture

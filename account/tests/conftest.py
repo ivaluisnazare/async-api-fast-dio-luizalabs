@@ -1,19 +1,24 @@
-import os
-import sys
+# account/tests/conftest.py
 from typing import AsyncGenerator
 from unittest.mock import AsyncMock
+
+import os
+import sys
 
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient
 
-from account.main import app
-from account.src.dependencies.auth_dependency import (get_current_user,
-                                                      get_current_user_id)
-from shared.database import get_db
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
+
+from main import app  # noqa: E402
+from src.dependencies.auth_dependency import (
+    get_current_user,
+    get_current_user_id,
+)  # noqa: E402
+from src.shared.database import get_db  # noqa: E402
 
 
 @pytest_asyncio.fixture
