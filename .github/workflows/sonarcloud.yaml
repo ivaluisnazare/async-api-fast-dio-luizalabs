@@ -59,7 +59,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
-        args: >
+        args: |
           -Dsonar.python.version=3.12.3
           -Dsonar.projectKey=ivaluisnazare_async-api-fast-dio-luizalabs
           -Dsonar.projectName=async-api-fast-dio-luizalabs
@@ -71,5 +71,5 @@ jobs:
           -Dsonar.tests=account/tests,user/tests
           -Dsonar.python.coverage.reportPaths=coverage.xml
           -Dsonar.python.xunit.reportPath=test-results.xml
-          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**,account/src/shared/**,account/src/config/**,account/src/messaging/**,account/src/models/**,account/src/securities/**,account/src/schemas/**,user/src/shared/**,user/src/config/**,user/src/messaging/**,user/src/models/**,user/src/security/**,user/src/schemas/**,user/src/repository/**
+          -Dsonar.coverage.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**,**/.github/**,**/htmlcov/**,**/src/config/**,**/src/models/**,**/src/schemas/**,**/main_consumer.py,**/init_db.py,**/service/user_service.py,**/repository/user_repository.py,**/controller/user_controller.py,**/main.py,**/shared/**,**/messaging/rabbitmq.py,**/service/auth_service.py,**/security/jwt_handler.py
           -Dsonar.cpd.exclusions=**/src/config/**,**/src/shared/**

@@ -10,14 +10,14 @@ WORKDIR $APP_HOME
 COPY requirements.txt .
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    g++ \
+    gcc=4:12.2.0-3 \
+    g++=4:12.2.0-3 \
     && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir --only-binary :all: --require-hashes pip==24.0 \
+    && pip install --no-cache-dir --only-binary :all: --require-hashes -r requirements.txt
 
-COPY . .
-#COPY . /app/user/
+COPY main.py .
+COPY src/ ./src/
 
 RUN groupadd -r appuser && useradd -r -g appuser appuser \
     && chown -R appuser:appuser "$APP_HOME"

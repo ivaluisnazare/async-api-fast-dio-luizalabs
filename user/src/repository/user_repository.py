@@ -107,7 +107,7 @@ class UserRepository:
     async def delete(self, user_id: int) -> bool:
         await self.get_by_id(user_id)
 
-        query = delete(users).where(users.users.c.id == user_id)
+        query = delete(users).where(users.c.id == user_id)
         result = await self.db.execute(query)
         return result.rowcount > 0
 
