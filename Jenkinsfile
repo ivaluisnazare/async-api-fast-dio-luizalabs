@@ -83,27 +83,31 @@ pipeline {
             }
         }
 
-        stage('Build & Push Image (parallel)') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: "${env.DOCKER_REGISTRY_CREDS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
-
-                    parallel(
-                        'Build Account': {
+        stage('Build & Push Images') {
+            parallel {
+                stage('Build Account') {
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: "${env.DOCKER_REGISTRY_CREDS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                            sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
                             dir('account') {
                                 sh "docker build -t ${env.ACCOUNT_IMAGE} -t ivanazare/account-service:latest ."
                                 sh "docker push ${env.ACCOUNT_IMAGE}"
                                 sh "docker push ivanazare/account-service:latest"
                             }
-                        },
-                        'Build User': {
+                        }
+                    }
+                }
+                stage('Build User') {
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: "${env.DOCKER_REGISTRY_CREDS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                            sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
                             dir('user') {
                                 sh "docker build -t ${env.USER_IMAGE} -t ivanazare/user-service:latest ."
                                 sh "docker push ${env.USER_IMAGE}"
                                 sh "docker push ivanazare/user-service:latest"
                             }
                         }
-                    )
+                    }
                 }
             }
         }
