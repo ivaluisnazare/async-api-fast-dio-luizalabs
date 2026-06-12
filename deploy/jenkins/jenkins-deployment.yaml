@@ -17,11 +17,17 @@ spec:
       containers:
         - name: jenkins
           image: jenkins/jenkins:lts-jdk17
+          securityContext:
+            runAsUser: 0
           ports:
             - containerPort: 8080
               name: http
             - containerPort: 50000
               name: jnlp
+          lifecycle:
+            postStart:
+              exec:
+                command: [ "/bin/sh", "-c", "apt-get update && apt-get install -y python3 python3-venv python3-pip" ]
           resources:
             limits:
               cpu: "1"
