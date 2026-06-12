@@ -14,6 +14,7 @@ pipeline {
         stage('Initial Analysis & Setup') {
             steps {
                 echo 'Starting the pipeline for the FastAPI stack...'
+                checkout scm
             }
         }
 
