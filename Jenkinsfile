@@ -27,9 +27,9 @@ pipeline {
                                 if ! command -v python3 &> /dev/null; then
                                     echo "Python3 not found. Installing..."
                                     if command -v apt-get &> /dev/null; then
-                                        sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv curl unzip
+                                        apt-get update && apt-get install -y python3 python3-pip python3-venv curl unzip
                                     else
-                                        echo "Package manager not found. Ensure Python is installed on your agent." && exit 1
+                                        echo "Package manager apt-get not found. Ensure Python is installed on your agent." && exit 1
                                     fi
                                 fi
                                 python3 -m venv .venv
@@ -68,9 +68,9 @@ pipeline {
                                 if ! command -v python3 &> /dev/null; then
                                     echo "Python3 not found. Installing..."
                                     if command -v apt-get &> /dev/null; then
-                                        sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv curl unzip
+                                        apt-get update && apt-get install -y python3 python3-pip python3-venv curl unzip
                                     else
-                                        echo "Package manager not found. Ensure Python is installed on your agent." && exit 1
+                                        echo "Package manager apt-get not found. Ensure Python is installed on your agent." && exit 1
                                     fi
                                 fi
                                 python3 -m venv .venv
