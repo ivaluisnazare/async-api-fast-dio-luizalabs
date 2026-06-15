@@ -20,32 +20,33 @@ pipeline {
         stage('Testes & Quality (parallel)') {
             parallel {
                 stage('CI - Account Service') {
-                    agent {
-                        kubernetes {
-                            yaml '''
-                            apiVersion: v1
-                            kind: Pod
-                            spec:
-                              containers:
-                              - name: python
-                                image: python:3.11-slim
-                                command: ["cat"]
-                                tty: true
-                            '''
-                        }
-                    }
                     steps {
                         dir('account') {
-                            echo 'Running tests with Pytest for Account Service...'
+                            echo 'Configuring Python environment and running tests for Account Service...'
                             sh '''
+                                if ! command -v python3 &> /dev/null; then
+                                    echo "Python3 not found. Installing..."
+                                    if command -v apt-get &> /dev/null; then
+                                        sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv curl unzip
+                                    else
+                                        echo "Package manager not found. Ensure Python is installed on your agent." && exit 1
+                                    fi
+                                fi
                                 python3 -m venv .venv
                                 . .venv/bin/activate
+                                pip install --upgrade pip
                                 pip install -r requirements.txt pytest pytest-cov
                                 pytest --cov=src --cov-report=xml:coverage.xml tests/
                             '''
 
                             withSonarQubeEnv("${env.SONAR_SERVER_NAME}") {
                                 sh """
+                                    if ! command -v sonar-scanner &> /dev/null; then
+                                        echo "Sonar Scanner not found. Downloading..."
+                                        curl -sSLo /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+                                        unzip -o /tmp/sonar-scanner.zip -d /tmp/
+                                        export PATH="/tmp/sonar-scanner-5.0.1.3006-linux/bin:\$PATH"
+                                    fi
                                     sonar-scanner \
                                     -Dsonar.organization=ivaluisnazare \
                                     -Dsonar.projectKey=ivaluisnazare_async-api-fast-dio-luizalabs \
@@ -60,32 +61,33 @@ pipeline {
                 }
 
                 stage('CI - User Service') {
-                    agent {
-                        kubernetes {
-                            yaml '''
-                            apiVersion: v1
-                            kind: Pod
-                            spec:
-                              containers:
-                              - name: python
-                                image: python:3.11-slim
-                                command: ["cat"]
-                                tty: true
-                            '''
-                        }
-                    }
                     steps {
                         dir('user') {
-                            echo 'Running tests with Pytest for User Service...'
+                            echo 'Configuring Python environment and running tests for User Service...'
                             sh '''
+                                if ! command -v python3 &> /dev/null; then
+                                    echo "Python3 not found. Installing..."
+                                    if command -v apt-get &> /dev/null; then
+                                        sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv curl unzip
+                                    else
+                                        echo "Package manager not found. Ensure Python is installed on your agent." && exit 1
+                                    fi
+                                fi
                                 python3 -m venv .venv
                                 . .venv/bin/activate
+                                pip install --upgrade pip
                                 pip install -r requirements.txt pytest pytest-cov
                                 pytest --cov=src --cov-report=xml:coverage.xml tests/
                             '''
 
                             withSonarQubeEnv("${env.SONAR_SERVER_NAME}") {
                                 sh """
+                                    if ! command -v sonar-scanner &> /dev/null; then
+                                        echo "Sonar Scanner not found. Downloading..."
+                                        curl -sSLo /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+                                        unzip -o /tmp/sonar-scanner.zip -d /tmp/
+                                        export PATH="/tmp/sonar-scanner-5.0.1.3006-linux/bin:\$PATH"
+                                    fi
                                     sonar-scanner \
                                     -Dsonar.organization=ivaluisnazare \
                                     -Dsonar.projectKey=ivaluisnazare_async-api-fast-dio-luizalabs \
