@@ -21,8 +21,17 @@ pipeline {
             parallel {
                 stage('CI - Account Service') {
                     agent {
-                        docker {
-                            image 'python:3.11-slim'
+                        kubernetes {
+                            yaml '''
+                            apiVersion: v1
+                            kind: Pod
+                            spec:
+                              containers:
+                              - name: python
+                                image: python:3.11-slim
+                                command: ["cat"]
+                                tty: true
+                            '''
                         }
                     }
                     steps {
@@ -52,8 +61,17 @@ pipeline {
 
                 stage('CI - User Service') {
                     agent {
-                        docker {
-                            image 'python:3.11-slim'
+                        kubernetes {
+                            yaml '''
+                            apiVersion: v1
+                            kind: Pod
+                            spec:
+                              containers:
+                              - name: python
+                                image: python:3.11-slim
+                                command: ["cat"]
+                                tty: true
+                            '''
                         }
                     }
                     steps {
