@@ -20,6 +20,11 @@ pipeline {
         stage('Testes & Quality (parallel)') {
             parallel {
                 stage('CI - Account Service') {
+                    agent {
+                        docker {
+                            image 'python:3.11-slim'
+                        }
+                    }
                     steps {
                         dir('account') {
                             echo 'Running tests with Pytest for Account Service...'
@@ -46,6 +51,11 @@ pipeline {
                 }
 
                 stage('CI - User Service') {
+                    agent {
+                        docker {
+                            image 'python:3.11-slim'
+                        }
+                    }
                     steps {
                         dir('user') {
                             echo 'Running tests with Pytest for User Service...'
