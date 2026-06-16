@@ -13,7 +13,19 @@ pipeline {
     stages {
         stage('Initial Analysis & Setup') {
             steps {
-                echo 'Starting the pipeline for the FastAPI stack...'
+                echo 'Starting the pipeline and preparing global environment...'
+                sh '''
+                    if ! command -v python3 &> /dev/null; then
+                        echo "Python3 not found global. Installing..."
+                        if command -v apt-get &> /dev/null; then
+                            apt-get update && apt-get install -y python3 python3-pip python3-venv curl unzip
+                        else
+                            echo "Package manager apt-get not found." && exit 1
+                        fi
+                    else
+                        echo "Python3 is already installed."
+                    fi
+                '''
             }
         }
 
@@ -22,16 +34,8 @@ pipeline {
                 stage('CI - Account Service') {
                     steps {
                         dir('account') {
-                            echo 'Configuring Python environment and running tests for Account Service...'
+                            echo 'Running tests for Account Service...'
                             sh '''
-                                if ! command -v python3 &> /dev/null; then
-                                    echo "Python3 not found. Installing..."
-                                    if command -v apt-get &> /dev/null; then
-                                        apt-get update && apt-get install -y python3 python3-pip python3-venv curl unzip
-                                    else
-                                        echo "Package manager apt-get not found. Ensure Python is installed on your agent." && exit 1
-                                    fi
-                                fi
                                 python3 -m venv .venv
                                 . .venv/bin/activate
                                 pip install --upgrade pip
@@ -63,16 +67,8 @@ pipeline {
                 stage('CI - User Service') {
                     steps {
                         dir('user') {
-                            echo 'Configuring Python environment and running tests for User Service...'
+                            echo 'Running tests for User Service...'
                             sh '''
-                                if ! command -v python3 &> /dev/null; then
-                                    echo "Python3 not found. Installing..."
-                                    if command -v apt-get &> /dev/null; then
-                                        apt-get update && apt-get install -y python3 python3-pip python3-venv curl unzip
-                                    else
-                                        echo "Package manager apt-get not found. Ensure Python is installed on your agent." && exit 1
-                                    fi
-                                fi
                                 python3 -m venv .venv
                                 . .venv/bin/activate
                                 pip install --upgrade pip
