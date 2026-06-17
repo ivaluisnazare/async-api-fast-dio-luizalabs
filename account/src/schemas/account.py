@@ -2,14 +2,14 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, condecimal
+
+PositiveDecimal = condecimal(ge=0, max_digits=10, decimal_places=2)
 
 
 class AccountBase(BaseModel):
     user_id: int = Field(..., description="user Id")
-    balance: Decimal = Field(
-        0, ge=0, description="account balance", max_digits=10, decimal_places=2
-    )
+    balance: PositiveDecimal = 0
 
 
 class AccountCreate(AccountBase):
@@ -17,9 +17,7 @@ class AccountCreate(AccountBase):
 
 
 class AccountUpdate(BaseModel):
-    balance: Optional[Decimal] = Field(
-        None, ge=0, description="account balance", max_digits=10, decimal_places=2
-    )
+    balance: Optional[PositiveDecimal] = None
 
 
 class AccountResponse(AccountBase):
